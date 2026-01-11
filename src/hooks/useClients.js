@@ -8,7 +8,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   getClients,
   getClient,
-  createClient,
+  createSupabaseClient,
   updateClient,
   deleteClient,
   addClientKeywords,
@@ -53,7 +53,7 @@ export function useClients(options = {}) {
 
   const create = async (clientData) => {
     try {
-      const newClient = await createClient(clientData);
+      const newClient = await createSupabaseClient(clientData);
       setClients(prev => [...prev, newClient]);
       toast.success('Client created successfully');
       return { data: newClient, error: null };

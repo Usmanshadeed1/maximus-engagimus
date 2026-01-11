@@ -4,6 +4,10 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // Ensure Vite loads environment variables from the repository root (where .env lives)
+  envDir: path.resolve(__dirname),
+  // Serve files from the `src` folder in dev so `http://localhost:3000/` maps to `src/index.html`.
+  root: path.resolve(__dirname, './src'),
   plugins: [react()],
   resolve: {
     alias: {
@@ -20,7 +24,8 @@ export default defineConfig({
     open: true,
   },
   build: {
-    outDir: 'dist',
+    // Make sure production build writes to the project-level `dist` folder
+    outDir: path.resolve(__dirname, 'dist'),
     sourcemap: true,
   },
 })

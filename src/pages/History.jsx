@@ -27,7 +27,7 @@ import {
   Spinner,
   Badge,
 } from '../components/ui';
-import { CommentOption } from '../components/generator/CommentOption';
+import CommentOption from '../components/generator/CommentOption';
 import { formatDate, formatRelativeTime, getPlatformInfo, copyToClipboard, truncate } from '../lib/utils';
 import { toast } from '../components/ui/Toast';
 

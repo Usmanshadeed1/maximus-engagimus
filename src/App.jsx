@@ -8,7 +8,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 
 // Layout
-import Layout from './components/layout/Layout';
+import Layout from './layout/Layout';
 
 // Pages
 import Login from './pages/Login';

@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { getGenerationHistory, getGenerationStats } from '../lib/supabase';
+import { getGeneratedComments, getCommentStats } from '../lib/supabase';
 import { toast } from '../components/ui/Toast';
 
 /**
@@ -29,7 +29,7 @@ export function useHistory(options = {}) {
       setLoading(true);
       setError(null);
       
-      const data = await getGenerationHistory({
+      const data = await getGeneratedComments({
         clientId,
         platform,
         limit: limit + 1, // Fetch one extra to check if there's more
@@ -151,7 +151,7 @@ export function useGenerationStats() {
       setLoading(true);
       setError(null);
       
-      const data = await getGenerationStats();
+      const data = await getCommentStats();
       
       // Calculate derived stats
       const totalGenerations = data.total_generations || 0;

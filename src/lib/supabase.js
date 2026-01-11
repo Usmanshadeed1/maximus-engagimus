@@ -214,7 +214,7 @@ export async function getClient(clientId) {
 /**
  * Create a new client
  */
-export async function createClient(clientData) {
+export async function createSupabaseClient(clientData) {
   const profile = await getUserProfile();
   
   const { data, error } = await supabase
