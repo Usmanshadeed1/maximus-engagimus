@@ -60,7 +60,7 @@ npm run a11y:audit
 
 - CI Badge (replace `OWNER/REPO` with your GitHub repository):
 
-![A11y & Visual QA](https://img.shields.io/github/actions/workflow/status/OWNER/REPO/a11y-and-visual-qa.yml?branch=main)
+![A11y & Visual QA](https://img.shields.io/github/actions/workflow/status/eddieyak0816/maximus-engagimus/a11y-and-visual-qa.yml?branch=main)
 
 > The workflow uploads artifacts (screenshots + `axe-color-contrast.json`) to the workflow run so reviewers can inspect visual diffs and accessibility findings.
 
