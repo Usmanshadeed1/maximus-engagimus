@@ -46,9 +46,27 @@ export function AuthProvider({ children }) {
 
     async function initializeAuth() {
       try {
-        // Get initial session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
+        // Get initial session with a single retry on AbortError (transient network)
+        let session = null;
+        let sessionError = null;
+
+        for (let attempt = 0; attempt < 2; attempt++) {
+          try {
+            const result = await supabase.auth.getSession();
+            session = result.data?.session;
+            sessionError = result.error;
+            break;
+          } catch (err) {
+            // Some browsers/extensions may abort fetch; retry once after a short delay
+            if (err?.name === 'AbortError' && attempt === 0) {
+              console.warn('[Auth] getSession aborted; retrying once...');
+              await new Promise((r) => setTimeout(r, 500));
+              continue;
+            }
+            throw err;
+          }
+        }
+
         if (sessionError) throw sessionError;
 
         if (mounted) {
@@ -61,7 +79,6 @@ export function AuthProvider({ children }) {
             setOrganization(null);
           }
           setLoading(false);
-          console.log('[Auth] initializeAuth: loading set to false, user:', !!session?.user);
         }
       } catch (err) {
         console.error('Auth initialization error:', err);
