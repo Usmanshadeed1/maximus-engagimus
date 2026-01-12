@@ -25,3 +25,7 @@ Spinner debug checklist (SOP):
 2) Check Computed Styles for `animation` and `border`/`width`/`height`.
 3) If missing, try Incognito (extensions disabled) to rule out interference.
 4) If broken in prod, add a screenshot and note browser/version in `DEV_NOTES.md`.
+
+UI guidance:
+- Do not show raw technical error messages to end users; map known errors to friendly messages and provide a retry option.
+- Keep technical details available to developers via console logs and `DEV_NOTES.md`.

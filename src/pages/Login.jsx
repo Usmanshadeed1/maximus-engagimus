@@ -154,7 +154,16 @@ export default function Login() {
           {/* Error Messages */}
           {(error || validationError) && (
             <div className="mb-4 p-3 bg-error-50 border border-error-200 text-error-700 rounded-md text-sm">
-              {validationError || error}
+              {/* Map technical init error to a friendly message and offer retry */}
+              {validationError || (error === 'auth-init-timeout' ? (
+                <div>
+                  <p>We couldn't initialize authentication — please check your connection or try again.</p>
+                  <div className="mt-2 flex gap-2">
+                    <button type="button" onClick={() => window.location.reload()} className="btn-primary py-1 px-3">Retry</button>
+                    <button type="button" onClick={() => { navigator.clipboard && navigator.clipboard.writeText(error); }} className="btn-ghost py-1 px-3">Copy error</button>
+                  </div>
+                </div>
+              ) : error)}
             </div>
           )}
 
