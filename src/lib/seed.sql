@@ -4,34 +4,34 @@
 
 -- NOTE: This is safe to run multiple times (uses UPSERT patterns where appropriate)
 
-BEGIN;
-
--- Create or get demo organization
-WITH org AS (
+-- Use a PL/pgSQL block so we can upsert and reference values across statements
+DO $$
+DECLARE
+  org_id UUID;
+BEGIN
+  -- Create or upsert the demo organization and capture the id
   INSERT INTO organizations (name, slug)
   VALUES ('Demo Organization', 'demo-organization')
   ON CONFLICT (slug) DO UPDATE SET name = EXCLUDED.name
-  RETURNING id
-)
--- Create or update user profile for the existing auth user
-INSERT INTO users (id, organization_id, email, full_name, role)
-SELECT
-  '36dce9fe-ad1b-4eca-841e-5d959b1b5cf5'::uuid as id, -- replace if needed
-  org.id,
-  'test@test.com' as email,
-  'Test User' as full_name,
-  'owner' as role
-FROM org
-ON CONFLICT (id) DO UPDATE SET organization_id = EXCLUDED.organization_id, email = EXCLUDED.email, full_name = EXCLUDED.full_name;
+  RETURNING id INTO org_id;
 
--- Add a demo client if not exists
-INSERT INTO clients (organization_id, name, industry, description, voice_prompt, default_cta)
-SELECT org.id, 'Demo Client', 'Home Services', 'Demo client for testing', 'Be friendly and helpful', 'Learn more'
-FROM org
-WHERE NOT EXISTS (
-  SELECT 1 FROM clients c WHERE c.organization_id = org.id AND c.name = 'Demo Client'
-);
+  -- Create or update the user profile for the existing auth user
+  INSERT INTO users (id, organization_id, email, full_name, role)
+  VALUES (
+    '36dce9fe-ad1b-4eca-841e-5d959b1b5cf5'::uuid, -- replace if needed
+    org_id,
+    'test@test.com',
+    'Test User',
+    'owner'
+  )
+  ON CONFLICT (id) DO UPDATE SET organization_id = EXCLUDED.organization_id, email = EXCLUDED.email, full_name = EXCLUDED.full_name;
 
-COMMIT;
+  -- Add a demo client if not exists
+  IF NOT EXISTS (SELECT 1 FROM clients WHERE organization_id = org_id AND name = 'Demo Client') THEN
+    INSERT INTO clients (organization_id, name, industry, description, voice_prompt, default_cta)
+    VALUES (org_id, 'Demo Client', 'Home Services', 'Demo client for testing', 'Be friendly and helpful', 'Learn more');
+  END IF;
+END;
+$$ LANGUAGE plpgsql;
 
 -- After running, refresh the app and verify Dashboard shows "Demo Client" under Active Clients and profile data appears.
