@@ -100,6 +100,8 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Skip link for keyboard users */}
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:bg-white focus:px-3 focus:py-2 focus:rounded-md focus:ring-2 focus:ring-primary-500">Skip to main content</a>
       {/* Desktop Sidebar */}
       <div className="hidden lg:block">
         <Sidebar
@@ -151,7 +153,7 @@ export default function Layout() {
         />
 
         {/* Page content */}
-        <main className="pt-6 p-4 sm:p-6 lg:p-8">
+        <main id="main-content" className="pt-6 p-4 sm:p-6 lg:p-8" tabIndex={-1}>
           <Outlet />
         </main>
       </div>

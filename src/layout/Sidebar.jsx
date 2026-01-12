@@ -64,12 +64,14 @@ const bottomNavItems = [
 export default function Sidebar({ collapsed, onToggle }) {
   return (
     <aside
+      id="main-sidebar"
       className={`
         fixed left-0 top-0 z-40 h-screen
         bg-white border-r border-gray-200
         transition-all duration-300 ease-in-out
         ${collapsed ? 'w-16' : 'w-64'}
       `}
+      aria-label="Sidebar navigation"
     >
       <div className="flex flex-col h-full">
         {/* Logo */}
@@ -87,14 +89,14 @@ export default function Sidebar({ collapsed, onToggle }) {
         </div>
 
         {/* Main Navigation */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollbar-hide">
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollbar-hide" role="navigation" aria-label="Main navigation">
           {navItems.map((item) => (
             <NavLink
               key={item.name}
               to={item.href}
               end={item.end}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors duration-200
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50
                 ${isActive
                   ? 'bg-primary-50 text-primary-700 font-medium'
                   : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
@@ -103,7 +105,7 @@ export default function Sidebar({ collapsed, onToggle }) {
               }
               title={collapsed ? item.name : undefined}
             >
-              <item.icon className="h-5 w-5 flex-shrink-0" />
+              <item.icon className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
               {!collapsed && <span>{item.name}</span>}
             </NavLink>
           ))}
@@ -133,19 +135,21 @@ export default function Sidebar({ collapsed, onToggle }) {
           {/* Collapse Toggle */}
           <button
             onClick={onToggle}
+            aria-controls="main-sidebar"
+            aria-expanded={!collapsed}
             className={`
               flex items-center gap-3 px-3 py-2.5 rounded-lg w-full
               text-gray-600 hover:bg-gray-100 hover:text-gray-900
-              transition-colors duration-200
+              transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50
               ${collapsed ? 'justify-center' : ''}
             `}
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {collapsed ? (
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-5 w-5" aria-hidden="true" />
             ) : (
               <>
-                <ChevronLeft className="h-5 w-5" />
+                <ChevronLeft className="h-5 w-5" aria-hidden="true" />
                 <span>Collapse</span>
               </>
             )}
