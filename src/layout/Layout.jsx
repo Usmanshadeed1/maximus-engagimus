@@ -137,10 +137,7 @@ export default function Layout() {
 
       {/* Main content area */}
       <div
-        className={`
-          transition-all duration-300 ease-in-out
-          lg:ml-${sidebarCollapsed ? '16' : '64'}
-        `}
+        className="transition-all duration-300 ease-in-out"
         style={{
           marginLeft: typeof window !== 'undefined' && window.innerWidth >= 1024
             ? sidebarCollapsed ? '4rem' : '16rem'

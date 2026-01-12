@@ -56,7 +56,12 @@ export default function Header({ onMenuClick, pageTitle }) {
     <header className="sticky top-0 z-30 bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
       <div className="max-w-7xl mx-auto flex items-center justify-between h-16 px-4 sm:px-6">
         <div className="flex items-center gap-4">
-          <button onClick={onMenuClick} className="lg:hidden p-2 -ml-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md">
+          <button
+            onClick={onMenuClick}
+            aria-label="Open main menu"
+            title="Open menu"
+            className="lg:hidden p-2 -ml-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+          >
             <Menu className="h-6 w-6" />
           </button>
 
@@ -72,8 +77,9 @@ export default function Header({ onMenuClick, pageTitle }) {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}
-            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-200"
+            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
             aria-label="Toggle theme"
+            title="Toggle theme"
           >
             {theme === 'light' ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.36 6.36l-1.42-1.42M7.05 7.05 5.64 5.64m12.02 0L19.36 5.64M7.05 16.95l-1.41 1.41" /></svg>
@@ -82,12 +88,22 @@ export default function Header({ onMenuClick, pageTitle }) {
             )}
           </button>
 
-          <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md relative">
+          <button
+            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md relative focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+            aria-label="Notifications"
+            title="Notifications"
+          >
             <Bell className="h-5 w-5" />
           </button>
 
           <div className="relative" ref={menuRef}>
-            <button onClick={() => setUserMenuOpen(u => !u)} className="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+            <button
+              onClick={() => setUserMenuOpen(u => !u)}
+              aria-haspopup="true"
+              aria-expanded={userMenuOpen}
+              title="User menu"
+              className="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+            >
               {profile?.avatar_url ? (
                 <img src={profile.avatar_url} alt={profile.full_name || 'User'} className="h-9 w-9 rounded-full object-cover" />
               ) : (
