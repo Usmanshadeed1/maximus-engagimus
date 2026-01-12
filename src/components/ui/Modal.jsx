@@ -22,6 +22,7 @@ export default function Modal({
   onClose,
   title,
   description,
+  ariaLabel,
   children,
   size = 'md',
   showClose = true,
@@ -33,16 +34,6 @@ export default function Modal({
   const modalRef = useRef(null);
   const previousActiveElement = useRef(null);
 
-  // Handle escape key
-  const handleEscape = useCallback(
-    (e) => {
-      if (e.key === 'Escape' && closeOnEscape) {
-        onClose();
-      }
-    },
-    [closeOnEscape, onClose]
-  );
-
   // Handle backdrop click
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget && closeOnBackdrop) {
@@ -50,30 +41,94 @@ export default function Modal({
     }
   };
 
+  // Helper: get focusable elements within modal
+  const getFocusableElements = (root) => {
+    if (!root) return [];
+    const selectors = [
+      'a[href]',
+      'area[href]',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      'button:not([disabled])',
+      'iframe',
+      'object',
+      'embed',
+      '[contenteditable]',
+      '[tabindex]:not([tabindex="-1"])',
+    ];
+    // Don't rely on layout-related properties (offsetParent) since jsdom doesn't implement layout.
+    return Array.from(root.querySelectorAll(selectors.join(',')));
+  };
+
+  // Combined keydown handler: Escape to close + Tab focus trap
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (e.key === 'Escape' && closeOnEscape) {
+        e.stopPropagation();
+        onClose();
+        return;
+      }
+
+      if (e.key === 'Tab') {
+        const focusable = getFocusableElements(modalRef.current);
+        if (focusable.length === 0) {
+          e.preventDefault();
+          return;
+        }
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const idx = focusable.indexOf(document.activeElement);
+
+        // Programmatically move focus because jsdom doesn't perform native tabbing
+        if (e.shiftKey) {
+          e.preventDefault();
+          if (idx === -1 || idx === 0) {
+            last.focus();
+          } else {
+            focusable[idx - 1].focus();
+          }
+        } else {
+          e.preventDefault();
+          if (idx === -1 || idx === focusable.length - 1) {
+            first.focus();
+          } else {
+            focusable[idx + 1].focus();
+          }
+        }
+      }
+    },
+    [closeOnEscape, onClose]
+  );
+
+  // Respect reduced motion preference
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   // Focus management and event listeners
   useEffect(() => {
     if (isOpen) {
       // Store currently focused element
       previousActiveElement.current = document.activeElement;
 
-      // Focus the modal
+      // Focus the modal container for screen readers
       modalRef.current?.focus();
 
-      // Add escape listener
-      document.addEventListener('keydown', handleEscape);
+      // Add keydown listener for escape and tab trapping
+      document.addEventListener('keydown', handleKeyDown);
 
       // Prevent body scroll
       document.body.style.overflow = 'hidden';
 
       return () => {
-        document.removeEventListener('keydown', handleEscape);
+        document.removeEventListener('keydown', handleKeyDown);
         document.body.style.overflow = '';
 
         // Restore focus
         previousActiveElement.current?.focus();
       };
     }
-  }, [isOpen, handleEscape]);
+  }, [isOpen, handleKeyDown]);
 
   // Don't render if not open
   if (!isOpen) return null;
@@ -102,11 +157,12 @@ export default function Modal({
         <div
           ref={modalRef}
           tabIndex={-1}
+          {...(title ? { 'aria-labelledby': 'modal-title' } : { 'aria-label': ariaLabel || description || 'Dialog' })}
           className={`
             relative w-full ${sizes[size]}
             bg-white dark:bg-[var(--card)] rounded-lg shadow-xl
             transform transition-all
-            animate-in fade-in zoom-in-95 duration-200
+            ${!prefersReducedMotion ? 'animate-in fade-in zoom-in-95 duration-200' : ''}
             ${className}
           `}
           onClick={(e) => e.stopPropagation()}

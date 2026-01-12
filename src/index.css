@@ -76,6 +76,12 @@ a { color: inherit; }
   @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
 }
 
+/* Dark-mode adjustments for primary text colors (links/small text) */
+/* Make primary text lighter in dark mode so it meets contrast requirements against near-black backgrounds */
+.dark .text-primary-500{ color: #7ea0ff; }
+.dark .text-primary-600{ color: #94b2ff; }
+.dark .hover\:text-primary-600:hover{ color: #94b2ff; }
+
 .input-base {
   @apply block w-full px-3 py-2 border border-gray-200 rounded-md bg-white text-gray-900 placeholder-gray-400
          focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-white

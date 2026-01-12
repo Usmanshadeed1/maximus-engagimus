@@ -25,9 +25,9 @@ if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
     console.log('Navigating to dashboard...');
     await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
 
-    // Inject axe-core from CDN
-    console.log('Injecting axe-core...');
-    await page.addScriptTag({ url: 'https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.9.3/axe.min.js' });
+    // Inject axe-core from local package
+    console.log('Injecting axe-core (local)...');
+    await page.addScriptTag({ path: require.resolve('axe-core/axe.min.js') });
 
     // Run color-contrast rule only
     console.log('Running color-contrast audit...');
@@ -45,6 +45,12 @@ if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
     violations.forEach((v) => {
       console.log(`- ${v.help} (${v.id}) — ${v.nodes.length} node(s)`);
     });
+
+    // Exit with failure when any violations are found so CI can catch regressions
+    if (violations.length > 0) {
+      console.error(`A11y audit failed: ${violations.length} contrast violation(s) found. See ${outPath} for details.`);
+      process.exitCode = 2;
+    }
 
     await context.close();
     console.log('Audit saved to', outPath);

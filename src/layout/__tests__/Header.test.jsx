@@ -26,13 +26,14 @@ describe('Header theme toggle', () => {
     // Ensure starting theme from localStorage is respected
     localStorage.removeItem('theme');
 
-    await user.click(toggle);
-    // After click theme toggles; check document class
-    expect(document.documentElement.classList.contains('dark')).toBe(true);
-    expect(localStorage.getItem('theme')).toBe('dark');
-
+    // Default is dark; first click should switch to light
     await user.click(toggle);
     expect(document.documentElement.classList.contains('dark')).toBe(false);
     expect(localStorage.getItem('theme')).toBe('light');
+
+    // Clicking again toggles back to dark
+    await user.click(toggle);
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+    expect(localStorage.getItem('theme')).toBe('dark');
   });
 });

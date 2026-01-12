@@ -312,36 +312,36 @@ export default function Login() {
           {/* Mode Toggle */}
           <div className="mt-6 text-center text-sm">
             {mode === 'signin' && (
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 Don't have an account?{' '}
                 <button
                   type="button"
                   onClick={() => changeMode('signup')}
-                  className="text-primary-500 hover:text-primary-600 font-medium"
+                  className="text-primary-500 hover:text-primary-600 dark:text-primary-300 dark:hover:text-primary-200 font-medium"
                 >
                   Sign up
                 </button>
               </p>
             )}
             {mode === 'signup' && (
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 Already have an account?{' '}
                 <button
                   type="button"
                   onClick={() => changeMode('signin')}
-                  className="text-primary-500 hover:text-primary-600 font-medium"
+                  className="text-primary-500 hover:text-primary-600 dark:text-primary-300 dark:hover:text-primary-200 font-medium"
                 >
                   Sign in
                 </button>
               </p>
             )}
             {mode === 'forgot' && (
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 Remember your password?{' '}
                 <button
                   type="button"
                   onClick={() => changeMode('signin')}
-                  className="text-primary-500 hover:text-primary-600 font-medium"
+                  className="text-primary-500 hover:text-primary-600 dark:text-primary-300 dark:hover:text-primary-200 font-medium"
                 >
                   Sign in
                 </button>

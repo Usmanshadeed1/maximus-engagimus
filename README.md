@@ -41,6 +41,31 @@ npm run dev
 ```
 
 > ✅ Local dev verified: dependencies installed, `.env` configured, and dev server runs (app renders).
+
+---
+
+## ✅ CI & QA (A11y + Visual)
+
+- This project runs an accessibility color-contrast audit (axe) and a Playwright visual QA on push and pull requests via GitHub Actions.
+
+- Run the checks locally:
+
+```bash
+# visual QA (captures desktop/tablet/mobile screenshots)
+npm run visual:qa
+
+# accessibility color-contrast audit (runs axe and writes results to visual-screenshots/)
+npm run a11y:audit
+```
+
+- CI Badge (replace `OWNER/REPO` with your GitHub repository):
+
+![A11y & Visual QA](https://img.shields.io/github/actions/workflow/status/OWNER/REPO/a11y-and-visual-qa.yml?branch=main)
+
+> The workflow uploads artifacts (screenshots + `axe-color-contrast.json`) to the workflow run so reviewers can inspect visual diffs and accessibility findings.
+
+---
+
 ## 📁 Project Structure
 
 ```

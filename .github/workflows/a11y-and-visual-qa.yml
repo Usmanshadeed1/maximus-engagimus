@@ -1,0 +1,64 @@
+name: A11y & Visual QA
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  a11y-audit:
+    name: Axe color-contrast audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Axe color-contrast audit
+        run: node scripts/a11y-audit.cjs
+
+      - name: Upload audit results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-results
+          path: visual-screenshots/axe-color-contrast.json
+
+  visual-qa:
+    name: Playwright Visual QA
+    runs-on: ubuntu-latest
+    needs: a11y-audit
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run visual QA
+        run: npm run visual:qa
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-screenshots
+          path: visual-screenshots
