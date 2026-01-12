@@ -50,22 +50,28 @@ export function AuthProvider({ children }) {
         let session = null;
         let sessionError = null;
 
-        for (let attempt = 0; attempt < 2; attempt++) {
-          try {
-            const result = await supabase.auth.getSession();
-            session = result.data?.session;
-            sessionError = result.error;
-            break;
-          } catch (err) {
-            // Some browsers/extensions may abort fetch; retry once after a short delay
-            if (err?.name === 'AbortError' && attempt === 0) {
-              console.warn('[Auth] getSession aborted; retrying once...');
-              await new Promise((r) => setTimeout(r, 500));
-              continue;
+        const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error('auth-init-timeout')), 8000));
+
+        const getSessionWithRetry = async () => {
+          for (let attempt = 0; attempt < 2; attempt++) {
+            try {
+              const result = await supabase.auth.getSession();
+              return { session: result.data?.session, error: result.error };
+            } catch (err) {
+              if (err?.name === 'AbortError' && attempt === 0) {
+                console.warn('[Auth] getSession aborted; retrying once...');
+                await new Promise((r) => setTimeout(r, 500));
+                continue;
+              }
+              throw err;
             }
-            throw err;
           }
-        }
+          return { session: null, error: null };
+        };
+
+        const { session: s, error: se } = await Promise.race([getSessionWithRetry(), timeoutPromise]);
+        session = s;
+        sessionError = se;
 
         if (sessionError) throw sessionError;
 
@@ -81,9 +87,13 @@ export function AuthProvider({ children }) {
           setLoading(false);
         }
       } catch (err) {
-        console.error('Auth initialization error:', err);
+        console.warn('Auth initialization fallback triggered:', err?.message || err);
+        // On timeout or other errors, ensure loading is cleared and allow UI to show login
         if (mounted) {
-          setError(err.message);
+          setError(err?.message || 'Auth initialization failed');
+          setUser(null);
+          setProfile(null);
+          setOrganization(null);
           setLoading(false);
         }
       }
