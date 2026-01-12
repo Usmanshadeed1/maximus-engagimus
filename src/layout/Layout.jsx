@@ -101,7 +101,7 @@ export default function Layout() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Skip link for keyboard users */}
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:bg-white focus:px-3 focus:py-2 focus:rounded-md focus:ring-2 focus:ring-primary-500">Skip to main content</a>
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:bg-white dark:focus:bg-[var(--card-soft)] focus:px-3 focus:py-2 focus:rounded-md focus:ring-2 focus:ring-primary-500">Skip to main content</a>
       {/* Desktop Sidebar */}
       <div className="hidden lg:block">
         <Sidebar
@@ -120,7 +120,7 @@ export default function Layout() {
           />
 
           {/* Sidebar */}
-          <div className="fixed inset-y-0 left-0 w-64 bg-white shadow-xl">
+          <div className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-[var(--card)] shadow-xl border-r border-gray-200 dark:border-gray-800">
             {/* Close button */}
             <button
               onClick={() => setMobileMenuOpen(false)}

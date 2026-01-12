@@ -216,7 +216,7 @@ function AIProvidersTab() {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium text-gray-700 transition-colors"
+              className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium text-gray-700 dark:bg-[var(--card-soft)] dark:hover:bg-[var(--card)] dark:text-gray-200 transition-colors"
             >
               {link.name}
               <ExternalLink className="h-3 w-3" />

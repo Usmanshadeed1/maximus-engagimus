@@ -267,7 +267,7 @@ export default function ClientDetail() {
                 <Card.Title>Voice Prompt (with CTA)</Card.Title>
                 <Card.Description>Used when "Include CTA" is enabled</Card.Description>
               </Card.Header>
-              <div className="bg-gray-50 rounded-md p-3 text-sm text-gray-700 whitespace-pre-wrap">
+              <div className="bg-gray-50 dark:bg-[var(--bg)] rounded-md p-3 text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
                 {client.voice_prompt_with_cta}
               </div>
             </Card>
@@ -359,7 +359,7 @@ export default function ClientDetail() {
                 {client.sample_comments.map((sample) => (
                   <div
                     key={sample.id}
-                    className="flex items-start gap-3 p-3 bg-gray-50 rounded-md"
+                    className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-[var(--bg)] rounded-md"
                   >
                     <div className="flex-1">
                       <p className="text-sm text-gray-700">"{sample.comment_text}"</p>
@@ -408,7 +408,7 @@ export default function ClientDetail() {
                 {client.industry_sites.map((site) => (
                   <div
                     key={site.id}
-                    className="flex items-center justify-between p-2 bg-gray-50 rounded-md"
+                    className="flex items-center justify-between p-2 bg-gray-50 dark:bg-[var(--bg)] rounded-md"
                   >
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium">{site.site_name}</span>

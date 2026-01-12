@@ -11,7 +11,10 @@
 
 /* Dark theme variables - toggled with the `dark` class on the documentElement */
 .dark {
-  --bg: #0d0d16; /* gray-950 */
+  /* Match the login/card color for full-screen dark mode */
+  --bg: #0b0b0d; /* near-black */
+  --card: #111216; /* card surface - slightly lighter than page */
+  --card-soft: #0f1112; /* subtle surface for inputs/list items */
   --text: #E9ECEF; /* gray-100 */
   --muted: #94a3b8; /* gray-400-ish */
 }
@@ -47,13 +50,14 @@ a { color: inherit; }
 
 /* Button utilities */
 .btn-base {
-  @apply inline-flex items-center justify-center font-medium rounded-md shadow-sm
+  @apply inline-flex items-center justify-center font-medium rounded-md shadow-sm transform-gpu
          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
          disabled:opacity-50 disabled:cursor-not-allowed motion-safe:transition-transform motion-safe:transition-shadow duration-150;
 }
 
 .btn-primary {
-  @apply btn-base bg-primary-500 text-white hover:bg-primary-600 active:scale-95 active:shadow-sm focus-visible:ring-primary-500;
+  @apply btn-base bg-primary-500 text-white hover:bg-primary-600 active:scale-95 active:shadow-sm focus-visible:ring-primary-500
+         hover:shadow-md motion-safe:hover:-translate-y-1;
 }
 
 .btn-ghost {
@@ -63,20 +67,24 @@ a { color: inherit; }
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .btn-base { transition: none; }
+  .btn-primary { transform: none; }
 }
+
 
 /* Form controls */
 .form-label {
-  @apply block text-sm font-medium text-gray-700 mb-1;
+  @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
 }
 
 .input-base {
   @apply block w-full px-3 py-2 border border-gray-200 rounded-md bg-white text-gray-900 placeholder-gray-400
-         focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-150;
+         focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-white
+         transition-colors duration-150;
+  @apply dark:bg-[var(--card-soft)] dark:text-gray-200 dark:border-gray-700 dark:placeholder-gray-400 dark:focus-visible:ring-offset-gray-900;
 }
 
 .input-base:disabled {
-  @apply bg-gray-50 cursor-not-allowed;
+  @apply bg-gray-50 cursor-not-allowed dark:bg-gray-700 dark:text-gray-400;
 }
 
 

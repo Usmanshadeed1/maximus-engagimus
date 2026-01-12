@@ -75,7 +75,7 @@ const Spinner = forwardRef(function Spinner(
 // Full page spinner
 Spinner.FullPage = function FullPageSpinner({ message = 'Loading...' }) {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-white/80 dark:bg-black/60 backdrop-blur-sm z-50">
       <div className="text-center">
         {/* Primary spinner (uses classes) */}
         <Spinner size="xl" aria-hidden="true" />
@@ -106,7 +106,7 @@ Spinner.Inline = function InlineSpinner({
 // Overlay spinner for containers
 Spinner.Overlay = function OverlaySpinner({ message }) {
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-white/70 backdrop-blur-sm rounded-lg z-10">
+    <div className="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-black/60 backdrop-blur-sm rounded-lg z-10">
       <div className="text-center">
         <Spinner size="lg" />
         {message && (

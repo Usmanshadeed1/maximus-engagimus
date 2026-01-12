@@ -125,17 +125,17 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[var(--bg)] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Logo and Title */}
         <div className="text-center">
           <div className="mx-auto h-16 w-16 bg-primary-500 rounded-xl flex items-center justify-center">
             <Zap className="h-10 w-10 text-white" />
           </div>
-          <h1 className="mt-6 text-3xl font-bold text-gray-900">
+          <h1 className="mt-6 text-3xl font-bold text-gray-900 dark:text-white">
             Maximus <span className="text-primary-500">Engage</span>imus
           </h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
             {mode === 'signin' && 'Sign in to your account'}
             {mode === 'signup' && 'Create your account'}
             {mode === 'forgot' && 'Reset your password'}
@@ -143,7 +143,7 @@ export default function Login() {
         </div>
 
         {/* Form Card */}
-        <div className="bg-white shadow-lg rounded-lg p-8">
+        <div className="bg-white shadow-lg dark:bg-[var(--card)] dark:border dark:border-gray-700 rounded-lg p-8">
           {/* Success Message */}
           {success && (
             <div className="mb-4 p-3 bg-success-50 border border-success-200 text-success-700 rounded-md text-sm">

@@ -536,7 +536,7 @@ function InsightsView({ insights }) {
           {insights.staleLocations.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {insights.staleLocations.slice(0, 6).map((loc, idx) => (
-                <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-[var(--bg)] rounded-lg">
                   <div>
                     <p className="font-medium text-gray-900">{loc.location_name}</p>
                     <p className="text-xs text-gray-500">

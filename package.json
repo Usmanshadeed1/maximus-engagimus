@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest --environment jsdom --run",
-    "visual:qa": "node scripts/visual-qa.js"
+    "visual:qa": "node scripts/visual-qa.cjs"
   },
   "vitest": {
     "setupFiles": [

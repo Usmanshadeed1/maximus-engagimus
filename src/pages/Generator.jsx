@@ -263,7 +263,7 @@ export default function Generator() {
               </div>
 
               {/* Tips */}
-              <Card padding="sm" className="bg-gray-50">
+              <Card padding="sm" className="bg-gray-50 dark:bg-[var(--bg)]">
                 <p className="text-xs text-gray-600">
                   <strong>Tip:</strong> Click "Use & Copy" to mark a comment as used and copy it to your clipboard.
                   This helps track which comments you've actually posted.

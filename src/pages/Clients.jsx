@@ -151,13 +151,13 @@ export default function Clients() {
         </div>
 
         {/* View toggle */}
-        <div className="flex border border-gray-300 rounded-md overflow-hidden">
+        <div className="flex border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
           <button
             onClick={() => setViewMode('grid')}
             className={`p-2 ${
               viewMode === 'grid'
                 ? 'bg-primary-50 text-primary-600'
-                : 'bg-white text-gray-500 hover:bg-gray-50'
+                : 'bg-white dark:bg-[var(--bg)] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[var(--bg)]'
             }`}
             title="Grid view"
           >
@@ -165,10 +165,10 @@ export default function Clients() {
           </button>
           <button
             onClick={() => setViewMode('list')}
-            className={`p-2 border-l border-gray-300 ${
+            className={`p-2 border-l border-gray-300 dark:border-gray-600 ${
               viewMode === 'list'
                 ? 'bg-primary-50 text-primary-600'
-                : 'bg-white text-gray-500 hover:bg-gray-50'
+                : 'bg-white dark:bg-[var(--bg)] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[var(--bg)]'
             }`}
             title="List view"
           >
@@ -184,14 +184,14 @@ export default function Clients() {
 
       {/* Clients grid/list */}
       {filteredClients.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-          <div className="text-gray-400 mb-4">
+        <div className="text-center py-12 bg-white dark:bg-[var(--bg)] rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="text-gray-400 dark:text-gray-300 mb-4">
             <Filter className="h-12 w-12 mx-auto" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
             No clients found
           </h3>
-          <p className="text-gray-500 mb-4">
+          <p className="text-gray-500 dark:text-gray-300 mb-4">
             {clients.length === 0
               ? "You haven't added any clients yet."
               : 'Try adjusting your search or filters.'}

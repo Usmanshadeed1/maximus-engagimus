@@ -256,7 +256,7 @@ Example: A LinkedIn post about digital marketing trends, a forum discussion abou
 
           {/* No matches message */}
           {!loading && !error && results.length === 0 && analyzedContent && (
-            <Card className="bg-gray-50">
+            <Card className="bg-gray-50 dark:bg-[var(--bg)]">
               <div className="text-center py-4">
                 <p className="text-gray-600">No matching clients found.</p>
                 <p className="text-sm text-gray-500 mt-1">
@@ -281,7 +281,7 @@ function MatchResult({ result, onGenerateComment }) {
     <Card padding="none" className="overflow-hidden">
       {/* Header */}
       <div
-        className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50"
+        className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-[var(--bg)]"
         onClick={() => setExpanded(!expanded)}
       >
         <div className="flex items-center gap-3">
@@ -355,7 +355,7 @@ function MatchResult({ result, onGenerateComment }) {
                 <MessageSquare className="h-4 w-4" />
                 Suggested Approach
               </div>
-              <p className="text-sm text-gray-600 bg-gray-50 rounded-md p-3">
+              <p className="text-sm text-gray-600 bg-gray-50 dark:bg-[var(--bg)] dark:text-gray-200 rounded-md p-3">
                 {result.angle}
               </p>
             </div>

@@ -270,7 +270,7 @@ function HistoryItem({ item }) {
     <Card padding="none">
       {/* Header - clickable to expand */}
       <div
-        className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+        className="p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-[var(--card-soft)] transition-colors"
         onClick={() => setExpanded(!expanded)}
       >
         <div className="flex items-start justify-between">
@@ -328,7 +328,7 @@ function HistoryItem({ item }) {
       {expanded && (
         <div className="border-t border-gray-100">
           {/* Source content full */}
-          <div className="p-4 bg-gray-50">
+          <div className="p-4 bg-gray-50 dark:bg-[var(--card-soft)]">
             <h4 className="text-xs font-medium text-gray-500 uppercase mb-2">
               Source Content
             </h4>
@@ -354,7 +354,7 @@ function HistoryItem({ item }) {
           </div>
 
           {/* Actions */}
-          <div className="px-4 py-3 bg-gray-50 border-t border-gray-100 flex justify-end gap-2">
+          <div className="px-4 py-3 bg-gray-50 dark:bg-[var(--bg)] border-t border-gray-100 dark:border-gray-700 flex justify-end gap-2">
             <Link
               to={`/generator?prefill=${item.id}`}
               className="text-sm text-primary-600 hover:text-primary-700"

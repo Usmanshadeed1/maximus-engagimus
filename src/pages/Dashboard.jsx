@@ -242,7 +242,7 @@ export default function Dashboard() {
                   <Link
                     key={client.id}
                     to={`/clients/${client.id}`}
-                    className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-md transition-colors"
+                    className="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-[var(--bg)] rounded-md transition-colors"
                   >
                     <span className="font-medium text-gray-900 truncate">
                       {client.name}
