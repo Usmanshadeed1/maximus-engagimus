@@ -68,15 +68,15 @@ export default function Dashboard() {
           <Card
             padding="sm"
             hover
-            className="h-full bg-gradient-to-br from-primary-50 to-primary-100 border-primary-200"
+            className="h-full bg-primary-50 border-primary-200 dark:bg-[var(--card)] dark:border-gray-700 quick-card"
           >
             <div className="flex items-center gap-4">
               <div className="p-3 bg-primary-500 rounded-lg">
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-primary-900">Generate Comments</h3>
-                <p className="text-sm text-primary-700">Create AI-powered comments</p>
+                <h3 className="font-semibold text-primary-900 dark:text-[var(--text)]">Generate Comments</h3>
+                <p className="text-sm text-primary-700 dark:text-[var(--muted)]">Create AI-powered comments</p>
               </div>
             </div>
           </Card>
@@ -86,15 +86,15 @@ export default function Dashboard() {
           <Card
             padding="sm"
             hover
-            className="h-full bg-gradient-to-br from-success-50 to-success-100 border-success-200"
+            className="h-full bg-success-50 border-success-200 dark:bg-[var(--card)] dark:border-gray-700 quick-card"
           >
             <div className="flex items-center gap-4">
               <div className="p-3 bg-success-500 rounded-lg">
                 <Search className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-success-900">Analyze Content</h3>
-                <p className="text-sm text-success-700">Match content to clients</p>
+                <h3 className="font-semibold text-success-900 dark:text-[var(--text)]">Analyze Content</h3>
+                <p className="text-sm text-success-700 dark:text-[var(--muted)]">Match content to clients</p>
               </div>
             </div>
           </Card>
@@ -104,15 +104,15 @@ export default function Dashboard() {
           <Card
             padding="sm"
             hover
-            className="h-full bg-gradient-to-br from-warning-50 to-warning-100 border-warning-200"
+            className="h-full bg-warning-50 border-warning-200 dark:bg-[var(--card)] dark:border-gray-700 quick-card"
           >
             <div className="flex items-center gap-4">
               <div className="p-3 bg-warning-500 rounded-lg">
                 <Users className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-warning-900">Track Competitors</h3>
-                <p className="text-sm text-warning-700">Monitor competitor activity</p>
+                <h3 className="font-semibold text-warning-900 dark:text-[var(--text)]">Track Competitors</h3>
+                <p className="text-sm text-warning-700 dark:text-[var(--muted)]">Monitor competitor activity</p>
               </div>
             </div>
           </Card>

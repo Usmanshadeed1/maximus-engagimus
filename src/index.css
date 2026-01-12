@@ -80,16 +80,50 @@ a { color: inherit; }
 /* Make primary text lighter in dark mode so it meets contrast requirements against near-black backgrounds */
 .dark .text-primary-500{ color: #7ea0ff; }
 .dark .text-primary-600{ color: #94b2ff; }
+.dark .text-primary-700{ color: #b6d0ff; }
+.dark .text-primary-900{ color: #9bb4ff; }
 .dark .hover\:text-primary-600:hover{ color: #94b2ff; }
 
 /* Dark mode: ensure commonly-used gray text utilities meet contrast by mapping them to our tokens */
 .dark .text-gray-200{ color: var(--text) !important; }
 .dark .text-gray-300{ color: var(--text) !important; }
 .dark .text-gray-400{ color: var(--muted) !important; }
+.dark .text-gray-500{ color: var(--muted) !important; }
+.dark .text-gray-600{ color: var(--muted) !important; }
+.dark .text-gray-700{ color: var(--text) !important; }
+.dark .text-gray-900{ color: var(--text) !important; }
 
 /* Component overrides to align with tokens */
 .dark .form-label { color: var(--muted); }
 .dark .input-base { color: var(--text); }
+
+/* Ensure bold / important text uses the high-contrast token */
+.dark .font-medium, .dark .font-semibold, .dark .font-bold { color: var(--text) !important; }
+
+/* Quick action cards: remove gradient in dark and match the dashboard card surface */
+.dark .quick-card {
+  /* remove any background image (gradient) and use our card token */
+  background-image: none !important;
+  background-color: var(--card) !important;
+  border-color: rgba(255,255,255,0.04) !important;
+}
+
+/* Ensure quick-card title and subtitle are readable in dark */
+.dark .quick-card .font-semibold { color: var(--text) !important; }
+.dark .quick-card p.text-sm { color: var(--muted) !important; }
+
+/* Stronger fallback selectors that match variations in generated classes */
+.dark [class*="quick-card"] {
+  background-image: none !important;
+  /* Use the page background in dark mode so quick-cards match the dashboard */
+  background-color: var(--bg) !important;
+  background-blend-mode: normal !important;
+  border-color: rgba(255,255,255,0.02) !important;
+}
+.dark [class*="quick-card"] h3,
+.dark [class*="quick-card"] .font-semibold { color: var(--text) !important; }
+.dark [class*="quick-card"] p,
+.dark [class*="quick-card"] .text-sm { color: var(--muted) !important; }
 
 .input-base {
   @apply block w-full px-3 py-2 border border-gray-200 rounded-md bg-white text-gray-900 placeholder-gray-400
