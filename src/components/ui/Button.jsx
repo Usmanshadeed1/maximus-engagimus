@@ -54,17 +54,21 @@ const Button = forwardRef(function Button(
 
   const baseStyles = `
     inline-flex items-center justify-center
-    font-medium rounded-md
-    focus:outline-none focus:ring-2 focus:ring-offset-2
+    font-medium rounded-md shadow-sm
+    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
     disabled:opacity-50 disabled:cursor-not-allowed
-    transition-all duration-200
-  `;
+    transform-gpu motion-safe:transition-transform motion-safe:transition-shadow duration-150
+    active:scale-95 active:shadow-sm hover:shadow-md
+    motion-reduce:transition-none
+  `; 
 
   return (
     <button
       ref={ref}
       type={type}
       disabled={isDisabled}
+      aria-disabled={isDisabled}
+      aria-busy={loading ? 'true' : 'false'}
       className={`
         ${baseStyles}
         ${variants[variant]}
@@ -76,20 +80,28 @@ const Button = forwardRef(function Button(
     >
       {/* Loading spinner */}
       {loading && (
-        <Loader2 className={`${iconSizes[size]} animate-spin mr-2`} />
+        <>
+          <Loader2
+            className={`${iconSizes[size]} animate-spin motion-reduce:animate-none mr-2`}
+            aria-hidden="true"
+          />
+          <span className="sr-only">Loading</span>
+        </>
       )}
 
       {/* Left icon */}
       {!loading && LeftIcon && (
-        <LeftIcon className={`${iconSizes[size]} mr-2`} />
+        <LeftIcon className={`${iconSizes[size]} mr-2`} aria-hidden="true" />
       )}
 
       {/* Button text */}
-      {children}
+      <span className="flex items-center gap-2">
+        {children}
+      </span>
 
       {/* Right icon */}
       {RightIcon && (
-        <RightIcon className={`${iconSizes[size]} ml-2`} />
+        <RightIcon className={`${iconSizes[size]} ml-2`} aria-hidden="true" />
       )}
     </button>
   );

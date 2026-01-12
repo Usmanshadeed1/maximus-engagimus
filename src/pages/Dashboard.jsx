@@ -90,11 +90,15 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       {/* Welcome header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">
+      <div className="max-w-3xl">
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900">
           {greeting}, {firstName}!
         </h1>
-        <p className="text-gray-600 mt-1">
+
+        {/* Decorative accent */}
+        <div className="mt-3 h-1 w-24 rounded bg-gradient-to-r from-primary-400 to-primary-600" aria-hidden="true" />
+
+        <p className="mt-4 text-lg text-gray-600">
           Here's what's happening with your engagement efforts.
         </p>
       </div>

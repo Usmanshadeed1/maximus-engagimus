@@ -80,9 +80,6 @@ Spinner.FullPage = function FullPageSpinner({ message = 'Loading...' }) {
         {/* Primary spinner (uses classes) */}
         <Spinner size="xl" aria-hidden="true" />
 
-        {/* Guaranteed CSS fallback spinner (no deps) */}
-        <div className="plain-spinner mx-auto" aria-hidden="true" />
-
         {message && (
           <p className="mt-4 text-gray-600 font-medium">{message}</p>
         )}
