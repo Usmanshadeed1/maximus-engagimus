@@ -50,7 +50,7 @@ export function AuthProvider({ children }) {
         let session = null;
         let sessionError = null;
 
-        const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error('auth-init-timeout')), 8000));
+        const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error('auth-init-timeout')), 4000));
 
         const getSessionWithRetry = async () => {
           for (let attempt = 0; attempt < 2; attempt++) {
