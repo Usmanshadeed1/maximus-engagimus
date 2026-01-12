@@ -15,9 +15,9 @@
   --bg: #0b0b0d; /* near-black */
   --card: #111216; /* card surface - slightly lighter than page */
   --card-soft: #0f1112; /* subtle surface for inputs/list items */
-  --text: #E9ECEF; /* gray-100 */
-  --muted: #94a3b8; /* gray-400-ish */
-}
+  --text: #ffffff; /* pure white for maximum contrast */
+  --muted: #9aa6b2; /* slightly brighter muted text in dark mode */
+} 
 
 html, body, #root {
   height: 100%;
@@ -81,6 +81,15 @@ a { color: inherit; }
 .dark .text-primary-500{ color: #7ea0ff; }
 .dark .text-primary-600{ color: #94b2ff; }
 .dark .hover\:text-primary-600:hover{ color: #94b2ff; }
+
+/* Dark mode: ensure commonly-used gray text utilities meet contrast by mapping them to our tokens */
+.dark .text-gray-200{ color: var(--text) !important; }
+.dark .text-gray-300{ color: var(--text) !important; }
+.dark .text-gray-400{ color: var(--muted) !important; }
+
+/* Component overrides to align with tokens */
+.dark .form-label { color: var(--muted); }
+.dark .input-base { color: var(--text); }
 
 .input-base {
   @apply block w-full px-3 py-2 border border-gray-200 rounded-md bg-white text-gray-900 placeholder-gray-400
