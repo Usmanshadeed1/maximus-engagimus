@@ -9,6 +9,13 @@
   --muted: #6b7280;
 }
 
+/* Dark theme variables - toggled with the `dark` class on the documentElement */
+.dark {
+  --bg: #0d0d16; /* gray-950 */
+  --text: #E9ECEF; /* gray-100 */
+  --muted: #94a3b8; /* gray-400-ish */
+}
+
 html, body, #root {
   height: 100%;
   margin: 0;

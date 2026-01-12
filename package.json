@@ -8,10 +8,13 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "test": "vitest --environment jsdom --run"
+    "test": "vitest --environment jsdom --run",
+    "visual:qa": "node scripts/visual-qa.js"
   },
   "vitest": {
-    "setupFiles": ["src/setupTests.js"]
+    "setupFiles": [
+      "src/setupTests.js"
+    ]
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
@@ -37,6 +40,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "jsdom": "^22.1.0",
+    "playwright": "^1.57.0",
     "postcss": "^8.4.32",
     "tailwindcss": "^3.4.0",
     "vite": "^5.0.8",
