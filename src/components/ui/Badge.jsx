@@ -133,7 +133,7 @@ Badge.Status = function StatusBadge({ active, activeLabel = 'Active', inactiveLa
 };
 
 // Relevance badge helper
-Badge.Relevance = function RelevanceBadge({ level, ...props }) {
+Badge.Relevance = function RelevanceBadge({ level, className = '', ...rest }) {
   const relevanceConfig = {
     high: { variant: 'success', label: 'High Match' },
     medium: { variant: 'warning', label: 'Medium Match' },
@@ -142,8 +142,19 @@ Badge.Relevance = function RelevanceBadge({ level, ...props }) {
 
   const config = relevanceConfig[level] || relevanceConfig.medium;
 
+  // Use more muted light-mode backgrounds and slightly less-saturated text for readability
+  const customClass = level === 'medium'
+    ? '!bg-black !text-white dark:bg-[var(--card-soft)] dark:text-gray-200 border border-gray-200 dark:border-gray-700 h-8 px-3 flex items-center'
+    : level === 'high'
+    ? 'bg-green-100 text-green-700 dark:bg-[var(--card-soft)] dark:text-gray-200 border border-gray-200 dark:border-gray-700 h-8 px-3 flex items-center'
+    : level === 'low'
+    ? 'bg-orange-100 text-orange-700 dark:bg-[var(--card-soft)] dark:text-gray-200 border border-gray-200 dark:border-gray-700 h-8 px-3 flex items-center'
+    : '';
+
+  const finalClass = `${customClass} leading-tight ${className}`.trim();
+
   return (
-    <Badge variant={config.variant} {...props}>
+    <Badge variant={config.variant} className={finalClass} {...rest}>
       {config.label}
     </Badge>
   );

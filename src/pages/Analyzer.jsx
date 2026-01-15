@@ -288,7 +288,7 @@ function MatchResult({ result, onGenerateComment }) {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-gray-900">{result.client_name}</h3>
-              <Badge.Relevance level={result.relevance} />
+              <Badge.Relevance level={result.relevance} className="self-center" />
             </div>
             <p className="text-sm text-gray-500">{result.industry}</p>
           </div>
@@ -296,7 +296,8 @@ function MatchResult({ result, onGenerateComment }) {
         <div className="flex items-center gap-2">
           <Button
             variant="primary"
-            size="sm"
+            size="xs"
+            className="ml-2 self-center h-8"
             onClick={(e) => {
               e.stopPropagation();
               onGenerateComment();
@@ -325,7 +326,12 @@ function MatchResult({ result, onGenerateComment }) {
               </div>
               <div className="flex flex-wrap gap-1">
                 {result.matched_keywords.map((keyword, idx) => (
-                  <Badge key={idx} variant="secondary" size="sm">
+                  <Badge
+                    key={idx}
+                    variant="secondary"
+                    size="sm"
+                    className="border border-gray-200 dark:bg-[var(--card-soft)] dark:text-gray-200 dark:border-gray-700"
+                  >
                     {keyword}
                   </Badge>
                 ))}
