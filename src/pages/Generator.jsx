@@ -78,7 +78,11 @@ export default function Generator() {
       includeCta: formData.includeCta,
     });
 
-    if (prompt && chatLink) {
+    if (!prompt) return;
+
+    // Prompt is copied by generatePromptForClipboard; open chat if provided.
+    if (chatLink) {
+      toast.info('Opening chat — prompt is on your clipboard (paste with Ctrl/⌘+V)');
       window.open(chatLink.url, '_blank', 'noopener,noreferrer');
     }
   };

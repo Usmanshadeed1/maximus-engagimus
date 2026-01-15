@@ -234,7 +234,8 @@ export function useGenerator() {
 
     const success = await copyToClipboard(prompt);
     if (success) {
-      toast.success('Prompt copied! Paste it in your AI chat.');
+      // Short instructional message including keyboard paste hints for Windows/Mac
+      toast.success('Prompt copied — paste into chat (Ctrl/⌘+V)');
     } else {
       toast.error('Failed to copy prompt');
     }
