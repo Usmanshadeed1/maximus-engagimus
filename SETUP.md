@@ -45,6 +45,9 @@ npm install
 
 ## 3. Environment Variables
 
+> E2E tests: create a `.env.test` file with `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` if you want to run Playwright E2E locally (see README for details).
+
+
 ```bash
 # Copy the example file
 cp .env.example .env

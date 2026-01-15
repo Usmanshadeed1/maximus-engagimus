@@ -75,8 +75,10 @@ export default function ClientCard({
               </span>
             </div>
 
-            {/* Status */}
-            <Badge.Status active={client.is_active} />
+            {/* Status (textual to match grid view) */}
+            <div className="text-xs text-gray-500 dark:text-gray-300">
+              {client.is_active ? 'Active' : 'Inactive'}
+            </div>
           </div>
 
           {/* Actions */}
@@ -97,7 +99,7 @@ export default function ClientCard({
                 <div className="absolute right-0 mt-1 w-36 bg-white dark:bg-[var(--card)] rounded-md shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10">
                   <Link
                     to={`/clients/${client.id}`}
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black hover:text-black"
                   >
                     <Edit className="h-4 w-4" />
                     Edit
@@ -107,7 +109,7 @@ export default function ClientCard({
                       setMenuOpen(false);
                       onDelete();
                     }}
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-error-600 hover:bg-error-50 w-full"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-error-600 hover:bg-error-50 hover:text-black hover:text-black w-full"
                   >
                     <Trash2 className="h-4 w-4" />
                     Delete

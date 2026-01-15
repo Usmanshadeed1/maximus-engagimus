@@ -614,11 +614,14 @@ BEGIN
           AND content_text ILIKE '%' || ck.keyword || '%'
       ), 0)
     )::INTEGER as relevance_score,
-    ARRAY(
-      SELECT ck.keyword
-      FROM client_keywords ck
-      WHERE ck.client_id = c.id
-        AND content_text ILIKE '%' || ck.keyword || '%'
+    COALESCE(
+      ARRAY(
+        SELECT ck.keyword
+        FROM client_keywords ck
+        WHERE ck.client_id = c.id
+          AND content_text ILIKE '%' || ck.keyword || '%'
+      )::text[],
+      ARRAY[]::text[]
     ) as matched_keywords
   FROM clients c
   WHERE c.organization_id = org_id

@@ -64,6 +64,37 @@ npm run a11y:audit
 
 > The workflow uploads artifacts (screenshots + `axe-color-contrast.json`) to the workflow run so reviewers can inspect visual diffs and accessibility findings.
 
+## 🧪 E2E (Playwright)
+
+- Run locally with a dedicated test env file:
+
+  1. Create a file `.env.test` in the project root with:
+     ```env
+     VITE_SUPABASE_URL=https://your-project.supabase.co
+     VITE_SUPABASE_ANON_KEY=your-anon-key
+     ```
+  2. Install dependencies and Playwright browsers:
+     ```bash
+     npm install
+     npx playwright install --with-deps
+     ```
+  3. Start the dev server (leave it running):
+     ```bash
+     npm run dev
+     ```
+  4. Run the E2E suite:
+     ```bash
+     npm run e2e
+     ```
+
+- Run a single test (example):
+
+```bash
+npx playwright test tests/e2e/analyzer-nondestructive.spec.ts -g "non-destructive keyword match" -w 1
+```
+
+- CI: The repository includes `.github/workflows/e2e.yml` that runs the E2E tests on PRs. Add `SUPABASE_URL` and `SUPABASE_ANON_KEY` to the repo secrets so CI can access your test database.
+
 ---
 
 ## 📁 Project Structure

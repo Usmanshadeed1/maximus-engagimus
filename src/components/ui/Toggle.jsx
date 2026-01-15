@@ -70,7 +70,7 @@ const Toggle = forwardRef(function Toggle(
         focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
         disabled:opacity-50 disabled:cursor-not-allowed
         ${sizeConfig.track}
-        ${checked ? 'bg-primary-500' : 'bg-gray-200'}
+        ${checked ? 'bg-primary-500' : 'bg-white dark:bg-[var(--card-soft)] border border-gray-300 dark:border-gray-700'}
         ${className}
       `}
       {...props}

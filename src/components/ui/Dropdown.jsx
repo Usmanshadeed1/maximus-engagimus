@@ -213,7 +213,7 @@ const Dropdown = forwardRef(function Dropdown(
                     onClick={() => handleSelect(option)}
                     className={`
                       flex items-center justify-between px-3 py-2 cursor-pointer
-                      ${selected ? 'bg-primary-50 text-primary-700' : 'text-gray-900 hover:bg-gray-100'}
+                      ${selected ? 'bg-primary-50 text-black' : 'text-gray-900 hover:bg-gray-100 hover:text-black'}
                     `}
                   >
                     {renderOption ? (
