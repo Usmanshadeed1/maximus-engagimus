@@ -87,9 +87,7 @@ export function AuthProvider({ children }) {
 
         if (mounted) {
           if (session?.user) {
-            setUser(session.user);
-            
-            // Fetch profile and wait for it to complete
+            // Fetch profile FIRST before setting user, so avatar shows correctly immediately
             try {
               const profileData = await Promise.race([
                 getUserProfile(),
@@ -98,13 +96,19 @@ export function AuthProvider({ children }) {
                 ),
               ]);
               
-              if (mounted && profileData) {
-                setProfile(profileData);
-                setOrganization(profileData?.organization || null);
+              if (mounted) {
+                // Now set both user and profile together so UI renders complete data
+                setUser(session.user);
+                if (profileData) {
+                  setProfile(profileData);
+                  setOrganization(profileData?.organization || null);
+                }
               }
             } catch (profileErr) {
               console.error('Error fetching profile:', profileErr);
               if (mounted) {
+                // Fall back to just setting user if profile fails
+                setUser(session.user);
                 setProfile(null);
                 setOrganization(null);
               }
@@ -136,27 +140,31 @@ export function AuthProvider({ children }) {
       async (event, session) => {
         if (mounted) {
           if (session?.user) {
-            setUser(session.user);
-            // Fetch profile on sign in or token refresh
-            if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-              try {
-                const profileData = await Promise.race([
-                  getUserProfile(),
-                  new Promise((_, reject) => 
-                    setTimeout(() => reject(new Error('Profile fetch timeout')), 20000)
-                  ),
-                ]);
-                
-                if (mounted && profileData) {
+            // Fetch profile FIRST before setting user (for all session states)
+            // This includes SIGNED_IN, TOKEN_REFRESHED, and restored sessions
+            try {
+              const profileData = await Promise.race([
+                getUserProfile(),
+                new Promise((_, reject) => 
+                  setTimeout(() => reject(new Error('Profile fetch timeout')), 20000)
+                ),
+              ]);
+              
+              if (mounted) {
+                // Set user and profile together so UI renders complete data
+                setUser(session.user);
+                if (profileData) {
                   setProfile(profileData);
                   setOrganization(profileData?.organization || null);
                 }
-              } catch (profileErr) {
-                console.error('Error fetching profile on sign in:', profileErr);
-                if (mounted) {
-                  setProfile(null);
-                  setOrganization(null);
-                }
+              }
+            } catch (profileErr) {
+              console.error('Error fetching profile on session change:', profileErr);
+              if (mounted) {
+                // Fall back to just setting user if profile fails
+                setUser(session.user);
+                setProfile(null);
+                setOrganization(null);
               }
             }
           } else {
