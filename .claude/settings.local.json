@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir /s \"c:\\\\Users\\\\eddie\\\\Google Drive\\\\Maximus Digital Marketing\\\\Maximus Engagimus\" /b)",
+      "Bash(findstr:*)"
+    ]
+  }
+}

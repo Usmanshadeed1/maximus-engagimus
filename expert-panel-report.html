@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximus Engagimus - Expert Panel Recommendations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e40af;
+            --accent: #f59e0b;
+            --accent-light: #fbbf24;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --neutral-50: #f9fafb;
+            --neutral-100: #f3f4f6;
+            --neutral-200: #e5e7eb;
+            --neutral-300: #d1d5db;
+            --neutral-400: #9ca3af;
+            --neutral-600: #4b5563;
+            --neutral-700: #374151;
+            --neutral-800: #1f2937;
+            --neutral-900: #111827;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            line-height: 1.7;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: white;
+            padding: 4rem 2rem;
+            margin: -2rem -2rem 4rem -2rem;
+            border-radius: 0 0 24px 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        .nav-tabs button {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--neutral-200);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs button:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--neutral-50);
+        }
+
+        .nav-tabs button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-intro {
+            background: var(--neutral-50);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .section-intro p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        .feature-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--neutral-200);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .feature-number {
+            background: var(--primary);
+            color: white;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .feature-description {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.2rem;
+            line-height: 1.8;
+        }
+
+        .feature-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .meta-item {
+            padding: 0.75rem;
+            background: var(--neutral-50);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .meta-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .meta-value {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .complexity-low {
+            border-left-color: var(--success);
+        }
+
+        .complexity-low .meta-value {
+            color: var(--success);
+        }
+
+        .complexity-medium {
+            border-left-color: var(--warning);
+        }
+
+        .complexity-medium .meta-value {
+            color: var(--warning);
+        }
+
+        .complexity-high {
+            border-left-color: var(--error);
+        }
+
+        .complexity-high .meta-value {
+            color: var(--error);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .badge-secondary {
+            background: var(--neutral-200);
+            color: var(--text-primary);
+        }
+
+        .schema-section {
+            background: var(--neutral-900);
+            color: #e0e7ff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .schema-section pre {
+            margin: 0;
+            color: #e0e7ff;
+        }
+
+        .schema-note {
+            background: var(--neutral-50);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .priority-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .priority-item {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 2px solid var(--neutral-200);
+            counter-increment: priority-counter;
+        }
+
+        .priority-item:nth-child(1) { border-color: #ff6b6b; background: linear-gradient(135deg, #ff6b6b15 0%, transparent 100%); }
+        .priority-item:nth-child(2) { border-color: #ff8787; background: linear-gradient(135deg, #ff878715 0%, transparent 100%); }
+        .priority-item:nth-child(3) { border-color: #ffa07a; background: linear-gradient(135deg, #ffa07a15 0%, transparent 100%); }
+        .priority-item:nth-child(n+4) { border-color: var(--primary); background: linear-gradient(135deg, var(--primary)15 0%, transparent 100%); }
+
+        .priority-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .priority-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .priority-section {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .priority-rationale {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+            margin-top: 3rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .what-exists {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-list {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 2px solid var(--neutral-200);
+        }
+
+        .feature-list h3 {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .feature-list ul {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 0.6rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .feature-list.gaps li:before {
+            content: "✗";
+            color: var(--neutral-400);
+        }
+
+        footer {
+            margin-top: 4rem;
+            padding: 2rem;
+            border-top: 2px solid var(--neutral-200);
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            header .subtitle {
+                font-size: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .nav-tabs button {
+                width: 100%;
+                text-align: left;
+            }
+
+            .feature-meta {
+                grid-template-columns: 1fr;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .feature-title {
+                font-size: 1.2rem;
+            }
+
+            .priority-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Accessibility improvements */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+        /* Large text mode */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text-primary: #f9fafb;
+                --text-secondary: #d1d5db;
+                --bg-primary: #1f2937;
+                --bg-secondary: #111827;
+            }
+
+            body {
+                background: var(--bg-secondary);
+            }
+
+            .feature-card,
+            .feature-list {
+                background: var(--bg-primary);
+                border-color: var(--neutral-700);
+            }
+
+            .section-intro,
+            .meta-item,
+            .schema-note {
+                background: var(--neutral-800);
+            }
+
+            .nav-tabs {
+                background: var(--bg-primary);
+                border-color: var(--neutral-700);
+            }
+
+            .nav-tabs button {
+                background: var(--bg-primary);
+                border-color: var(--neutral-700);
+                color: var(--text-primary);
+            }
+
+            .nav-tabs button:hover {
+                background: var(--neutral-700);
+            }
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary);
+            color: white;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Maximus Engagimus</h1>
+        <p class="subtitle">Expert Panel Recommendations for Digital Marketing Automation</p>
+    </header>
+
+    <div class="container">
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-btn active" onclick="switchSection('overview')">Overview</button>
+            <button class="nav-btn" onclick="switchSection('seo')">SEO Suite</button>
+            <button class="nav-btn" onclick="switchSection('content')">Content & Repurposing</button>
+            <button class="nav-btn" onclick="switchSection('multimedia')">Multimedia</button>
+            <button class="nav-btn" onclick="switchSection('scheduling')">Scheduling</button>
+            <button class="nav-btn" onclick="switchSection('reporting')">Reporting</button>
+            <button class="nav-btn" onclick="switchSection('offpage')">Off-Page</button>
+            <button class="nav-btn" onclick="switchSection('email')">Email & Ads</button>
+            <button class="nav-btn" onclick="switchSection('workflow')">Workflow UX</button>
+            <button class="nav-btn" onclick="switchSection('priority')">Build Order</button>
+        </div>
+
+        <!-- OVERVIEW SECTION -->
+        <div id="overview" class="section active">
+            <h2>What Exists Today</h2>
+
+            <div class="section-intro">
+                <p><strong>The tool is currently built around one core workflow: social media engagement via AI-generated comments.</strong> Everything else supports that mission. You have a solid foundation — now the panel recommends strategic expansions to automate your entire operation.</p>
+            </div>
+
+            <div class="what-exists">
+                <div class="feature-list">
+                    <h3>✓ Already Built</h3>
+                    <ul>
+                        <li>Client profiles (voice, keywords, sample comments, industry sites, target audience)</li>
+                        <li>AI comment generation with multi-provider fallback (8 providers)</li>
+                        <li>Platform-specific prompts (10 platforms)</li>
+                        <li>Content analysis & keyword-to-client matching</li>
+                        <li>Competitor tracking & sighting logs</li>
+                        <li>Comment history with basic stats</li>
+                        <li>AI provider config & "No API" clipboard mode</li>
+                        <li>Org/team management with RLS & audit logs</li>
+                    </ul>
+                </div>
+
+                <div class="feature-list gaps">
+                    <h3>✗ Not Yet Built (The Gaps)</h3>
+                    <ul>
+                        <li>No SEO tooling whatsoever</li>
+                        <li>No content creation beyond comments</li>
+                        <li>No scheduling or content calendar</li>
+                        <li>No batch/queue processing</li>
+                        <li>No exportable client reports</li>
+                        <li>No off-page engagement (forums, reviews, directories)</li>
+                        <li>No email or ad copy generation</li>
+                        <li>No command palette or bulk actions</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2>The Situation</h2>
+            <div class="section-intro">
+                <p><strong>You manage 20+ clients simultaneously.</strong> Your team does ALL of these manually: content writing, SEO work, media production, and reporting. The panel was asked: <em>"What can we automate or semi-automate to save the most human hours while leveraging the AI infrastructure that's already there?"</em></p>
+                <p>Everything below builds on your existing database schema, AI pipeline, and prompt system. No reinventing the wheel.</p>
+            </div>
+        </div>
+
+        <!-- SEO SUITE SECTION -->
+        <div id="seo" class="section">
+            <h2>1. SEO Suite</h2>
+            <div class="section-intro">
+                <p>Five tools that turn your clients' SEO strategy from manual research to AI-assisted execution. These feed into content creation (blogs, landing pages) and link building.</p>
+            </div>
+
+            <!-- Feature 1.1 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">1</div>
+                    <div class="feature-title">AI Keyword Cluster Generator</div>
+                </div>
+                <p class="feature-description">Given a client's existing keywords + industry, the AI generates themed keyword clusters organized into topic pillars: head terms, long-tail variants, question-based keywords, local variants. Foundation for all other SEO work.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Strategist, Architect</div>
+                    </div>
+                    <div class="meta-item complexity-medium">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Medium</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: keyword_clusters
+├── id (UUID, PK)
+├── client_id (FK → clients)
+├── organization_id (FK → organizations)
+├── pillar_name (VARCHAR)
+├── head_keyword (VARCHAR)
+├── keywords (JSONB)
+│   └── [{"keyword":"...", "type":"long_tail|question|local", "search_intent":"..."}]
+└── created_at (TIMESTAMPTZ)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>clients</code>, <code>client_keywords</code> tables. Reuses <code>generateCompletion()</code> from <code>ai.js</code>.
+                </div>
+            </div>
+
+            <!-- Feature 1.2 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">2</div>
+                    <div class="feature-title">Page-Level SEO Brief Generator</div>
+                </div>
+                <p class="feature-description">User pastes a URL or page title + target keyword. AI produces a structured SEO brief: recommended title tag, meta description, H1, suggested H2 subheadings, internal-link anchor suggestions, word-count guidance — all scoped to the client's voice.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Strategist, Content</div>
+                    </div>
+                    <div class="meta-item complexity-medium">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Medium</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: seo_briefs
+├── id (UUID, PK)
+├── client_id (FK → clients)
+├── target_keyword (VARCHAR)
+├── page_url (TEXT)
+├── brief_data (JSONB)
+│   └── {"title_tag":"...", "meta_desc":"...", "h1":"...", "h2s":[...], "word_count_target":1200, "internal_link_suggestions":[...]}
+└── status (draft|in_progress|published)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>clients</code> (voice_prompt drives tone). Pure new table, zero changes to existing tables.
+                </div>
+            </div>
+
+            <!-- Feature 1.3 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">3</div>
+                    <div class="feature-title">Local SEO Checklist Tracker</div>
+                </div>
+                <p class="feature-description">For clients with local businesses, maintains a per-client checklist of local SEO tasks: Google Business Profile completeness, NAP consistency across directories, local citation sources, schema markup, review solicitation. Team checks items off; AI can generate directory listing text on demand.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Strategist</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: local_seo_checklists
+├── id (UUID, PK)
+├── client_id (FK → clients)
+├── category (gbp|citations|nap|schema|reviews)
+├── task_title (VARCHAR)
+├── task_detail (TEXT)
+├── is_completed (BOOLEAN)
+├── completed_at (TIMESTAMPTZ)
+└── notes (TEXT)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>clients</code>. Standard checklist items seeded in migration. Mostly CRUD + checkbox UI.
+                </div>
+            </div>
+
+            <!-- Feature 1.4 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">4</div>
+                    <div class="feature-title">Technical SEO Red-Flag Scanner</div>
+                </div>
+                <p class="feature-description">User pastes HTML source or a URL's raw content. AI scans for common technical SEO issues: missing alt text, duplicate H1s, no canonical tag, missing schema markup, broken internal links, excessive page depth signals. Returns a prioritized findings list with severity.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Strategist, Architect</div>
+                    </div>
+                    <div class="meta-item complexity-medium">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Medium</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: seo_audits
+├── id (UUID, PK)
+├── client_id (FK → clients, nullable)
+├── organization_id (FK → organizations)
+├── page_url (TEXT)
+├── raw_input (TEXT)
+├── findings (JSONB)
+│   └── [{"id":"...", "severity":"high|medium|low", "category":"technical|on_page", "issue":"...", "recommendation":"..."}]
+└── created_at (TIMESTAMPTZ)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing AI pipeline. <code>client_id</code> is nullable so you can run ad-hoc audits without assigning to a client.
+                </div>
+            </div>
+
+            <!-- Feature 1.5 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">5</div>
+                    <div class="feature-title">Competitor SEO Gap Finder</div>
+                </div>
+                <p class="feature-description">Given an existing competitor from your database and a target keyword, the AI compares what the competitor likely ranks for versus the client's keyword clusters, and surfaces keyword gaps — topics the competitor covers that your client does not yet target.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Strategist, Architect</div>
+                    </div>
+                    <div class="meta-item complexity-medium">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Medium</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: seo_gap_reports
+├── id (UUID, PK)
+├── client_id (FK → clients)
+├── competitor_id (FK → competitors)
+├── gap_keywords (JSONB)
+│   └── [{"keyword":"...", "intent":"...", "priority":"high|medium|low", "suggested_content_type":"blog|landing_page|faq"}]
+└── generated_at (TIMESTAMPTZ)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>clients</code>, <code>competitors</code>, <code>client_keywords</code>, and optionally <code>keyword_clusters</code> from Feature 1.1.
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENT & REPURPOSING SECTION -->
+        <div id="content" class="section">
+            <h2>2. Content Creation & Repurposing</h2>
+            <div class="section-intro">
+                <p>Four tools that turn a single piece of content into multiple formats and scale outlines across your team. This is where "write once, publish everywhere" actually happens.</p>
+            </div>
+
+            <!-- Feature 2.1 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">1</div>
+                    <div class="feature-title">Blog Post Outline Generator</div>
+                </div>
+                <p class="feature-description">Client + target keyword → full structured outline: attention-grabbing hook, 4–6 H2 sections (each with 2–3 bullet sub-points), FAQ section, closing CTA. Saved as a reusable draft the team can hand off to writers or expand into full copy.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Content, Strategist</div>
+                    </div>
+                    <div class="meta-item complexity-medium">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Medium</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: content_outlines
+├── id (UUID, PK)
+├── client_id (FK → clients)
+├── organization_id (FK → organizations)
+├── content_type (blog_post|landing_page|email_newsletter|social_series|...)
+├── target_keyword (VARCHAR)
+├── title (VARCHAR)
+├── outline_data (JSONB)
+│   └── {"hook":"...", "sections":[{"h2":"...", "bullets":[...]}, ...], "faq":[...], "cta":"..."}
+├── status (draft|in_review|published)
+└── created_at (TIMESTAMPTZ)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>clients</code> (voice_prompt drives tone). This single table also stores all multimedia outlines (podcasts, videos, infographics) in Sections 3 — one table, multiple use cases.
+                </div>
+            </div>
+
+            <!-- Feature 2.2 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">2</div>
+                    <div class="feature-title">Content Repurposing Engine</div>
+                </div>
+                <p class="feature-description">Paste a finished blog post or article. Select a client and one or more target formats. The AI repurposes the source into: 3 platform-specific social posts, a LinkedIn article summary, a newsletter blurb, or email subject-line + preview pairs. Each output is saved and linked to the source. <strong>This reuses your existing platform prompt data directly.</strong></p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Content, UX</div>
+                    </div>
+                    <div class="meta-item complexity-medium">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Medium</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: content_repurposing
+├── id (UUID, PK)
+├── client_id (FK → clients)
+├── organization_id (FK → organizations)
+├── source_content (TEXT)
+├── source_label (VARCHAR)
+├── outputs (JSONB)
+│   └── [{"format":"instagram_post|linkedin_summary|newsletter_blurb|...", "platform":null|"instagram"|..., "text":"...", "approved":false}]
+└── created_at (TIMESTAMPTZ)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>clients</code>, existing AI pipeline. The prompt system in <code>prompts.js</code> already has per-platform style data — this reuses that directly.
+                </div>
+            </div>
+
+            <!-- Feature 2.3 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">3</div>
+                    <div class="feature-title">Social Media Series Planner</div>
+                </div>
+                <p class="feature-description">Team picks a client, a theme or keyword, and a number of posts (e.g., "5-post series"). The AI generates a cohesive multi-post series plan: each post gets a hook, body copy, suggested visual direction, and posting day. Saved as a single planning unit.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Content, UX</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Reuses:</strong> <code>content_outlines</code> table with <code>content_type = 'social_series'</code>. The JSONB structure flexes to hold the series: <code>{"theme":"...", "posts":[{"day":1, "hook":"...", "body":"...", "visual_direction":"...", "platform":"instagram"}, ...]}</code>
+                </div>
+            </div>
+
+            <!-- Feature 2.4 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">4</div>
+                    <div class="feature-title">"Generate More Like This" from History</div>
+                </div>
+                <p class="feature-description">When viewing any past generated comment in History that was marked as used (implicit team approval), a single button re-prompts the AI with that exact comment as a "target style" example. Produces new variants that match its tone, length, and approach. Eliminates manual reconstruction of what worked.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Architect, Content</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Schema change:</strong> Add <code>source_comment_id UUID REFERENCES generated_comments(id)</code> column to <code>generated_comments</code>. One ALTER TABLE, one index. No new table.
+                </div>
+            </div>
+        </div>
+
+        <!-- MULTIMEDIA SECTION -->
+        <div id="multimedia" class="section">
+            <h2>3. Multimedia & Media Production</h2>
+            <div class="section-intro">
+                <p>Five tools that generate structured briefs for multimedia assets: podcasts, short-form videos, infographics, PDFs, and ebooks. All reuse the same <code>content_outlines</code> table from Section 2. Each is a variant outline structure.</p>
+            </div>
+
+            <!-- Feature 3.1 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">1</div>
+                    <div class="feature-title">Podcast Episode Outline Generator</div>
+                </div>
+                <p class="feature-description">Given a client (or just an industry/topic), the AI produces a ready-to-record podcast episode outline: episode title, 60-second hook intro, 4–5 talking-point sections with discussion prompts and transitions, suggested guest question angles, and a closing summary + CTA.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Expert</div>
+                        <div class="meta-value">Content</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Reuses:</strong> <code>content_outlines</code> with <code>content_type = 'podcast_episode'</code>. JSONB holds: <code>{"hook":"...", "sections":[{"talking_point":"...", "prompts":[...], "transition":"..."}], "guest_questions":[...], "cta":"..."}</code>
+                </div>
+            </div>
+
+            <!-- Feature 3.2 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">2</div>
+                    <div class="feature-title">Video Script Generator (Short-Form)</div>
+                </div>
+                <p class="feature-description">Produces a scripted short-form video (60–90 seconds) for TikTok/Reels/Shorts: attention-grabbing hook (first 3 seconds), scene-by-scene script with on-screen text suggestions, voiceover lines, visual direction, and a CTA moment. Client voice is baked in.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Content, UX</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Reuses:</strong> <code>content_outlines</code> with <code>content_type = 'video_script'</code>. JSONB: <code>{"hook_scene":{"duration_sec":3,"on_screen_text":"...","voiceover":"..."}, "scenes":[...], "cta_scene":{...}}</code>
+                </div>
+            </div>
+
+            <!-- Feature 3.3 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">3</div>
+                    <div class="feature-title">Infographic Data Brief</div>
+                </div>
+                <p class="feature-description">Provide a topic and client. The AI generates a data-driven brief: 5–7 stats or data points the infographic should feature, a suggested visual flow/hierarchy, color/style recommendations aligned to client brand, and caption text. Your design team takes this brief and produces the actual graphic.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Content, Strategist</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Reuses:</strong> <code>content_outlines</code> with <code>content_type = 'infographic_brief'</code>. JSONB: <code>{"data_points":[{"stat":"...","source_note":"...","visual_treatment":"..."}], "flow_order":[...], "style_notes":"...", "caption":"..."}</code>
+                </div>
+            </div>
+
+            <!-- Feature 3.4 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">4</div>
+                    <div class="feature-title">PDF Lead Magnet Outline</div>
+                </div>
+                <p class="feature-description">Generates a structured outline for a downloadable PDF lead magnet (checklist, guide, template set). Includes: cover page copy, table of contents, per-section content summaries, visual treatment suggestions per page. Designed to be handed directly to a graphic designer or expanded by a writer.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Content, Strategist</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Reuses:</strong> <code>content_outlines</code> with <code>content_type = 'pdf_leadmagnet'</code>. JSONB: <code>{"cover_copy":{...}, "sections":[{"page_range":"1-2","heading":"...","summary":"...","visual_suggestion":"..."}], "cta_page":{...}}</code>
+                </div>
+            </div>
+
+            <!-- Feature 3.5 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">5</div>
+                    <div class="feature-title">Ebook Chapter Outline</div>
+                </div>
+                <p class="feature-description">For longer-form content marketing, generates a full ebook outline: title options, chapter list with 1-paragraph summaries, key takeaways per chapter, and a suggested appendix/resource section. Scoped to client industry and voice.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Expert</div>
+                        <div class="meta-value">Content</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Reuses:</strong> <code>content_outlines</code> with <code>content_type = 'ebook_outline'</code>. JSONB: <code>{"title_options":["...","..."], "chapters":[{"number":1,"title":"...","summary":"...","key_takeaways":[...]}], "appendix_suggestion":"..."}</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCHEDULING & AUTOMATION SECTION -->
+        <div id="scheduling" class="section">
+            <h2>4. Scheduling & Automation</h2>
+            <div class="section-intro">
+                <p>Four tools that keep your team on track and automate the repetitive queueing work. The "Batch Comment Generation Queue" is the panel's top priority — it unlocks your ability to scale across 20+ clients.</p>
+            </div>
+
+            <!-- Feature 4.1 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">1</div>
+                    <div class="feature-title">Content Calendar Board</div>
+                </div>
+                <p class="feature-description">Per-client or cross-client calendar view showing all planned content: outlines from Sections 2–3, scheduled series posts, and manual items. Items have a status workflow: planned → in progress → review → published. Assignable to team members. This is the central planning surface.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">UX, Strategist, Architect</div>
+                    </div>
+                    <div class="meta-item complexity-medium">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Medium</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: content_calendar_items
+├── id (UUID, PK)
+├── organization_id (FK → organizations)
+├── client_id (FK → clients, nullable)
+├── linked_outline_id (FK → content_outlines, nullable)
+├── title (VARCHAR)
+├── content_type (VARCHAR)
+├── platform (VARCHAR)
+├── scheduled_date (DATE)
+├── status (planned|in_progress|in_review|published)
+├── assignee_id (FK → users, nullable)
+├── notes (TEXT)
+└── created_at (TIMESTAMPTZ)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>clients</code>, <code>users` (for assignment). The calendar item is lightweight — a planning artifact, not a content store itself.
+                </div>
+            </div>
+
+            <!-- Feature 4.2 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">2</div>
+                    <div class="feature-title">Batch Comment Generation Queue</div>
+                </div>
+                <p class="feature-description"><strong>This is the single highest-leverage feature for your 20+-client operation.</strong> Instead of generating comments one post at a time, paste 5–10 URLs/content snippets at once, select target clients, and hit one button. The system queues them and runs them sequentially through the existing AI fallback chain (respecting rate limits), displaying results as each completes. Watch the progress bar tick up in real time.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Architect, UX</div>
+                    </div>
+                    <div class="meta-item complexity-high">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">High</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: batch_jobs
+├── id (UUID, PK)
+├── organization_id (FK → organizations)
+├── user_id (FK → users, nullable)
+├── status (pending|running|completed|failed)
+├── total_items (INTEGER)
+├── completed_items (INTEGER)
+├── failed_items (INTEGER)
+└── created_at (TIMESTAMPTZ)
+
+NEW TABLE: batch_job_items
+├── id (UUID, PK)
+├── batch_job_id (FK → batch_jobs)
+├── client_id (FK → clients)
+├── platform (VARCHAR)
+├── source_content (TEXT)
+├── include_cta (BOOLEAN)
+├── status (pending|running|completed|failed)
+├── generated_comment_id (FK → generated_comments, populated on success)
+├── error_message (TEXT, populated on failure)
+└── created_at (TIMESTAMPTZ)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>generated_comments</code> (each successful item writes a row there, exactly like the single generator). The queue runs client-side with sequential awaits and real-time progress UI. No new backend service needed — pure frontend orchestration using the existing AI fallback chain.
+                </div>
+            </div>
+
+            <!-- Feature 4.3 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">3</div>
+                    <div class="feature-title">Recurring Task Reminders</div>
+                </div>
+                <p class="feature-description">Per-client configurable reminders: "Check competitor sightings every Monday," "Publish blog post by Friday," "Update keywords monthly." Stored as rules; the dashboard surfaces overdue items. No external cron needed — the check runs on page load and compares <code>last_triggered_at</code> against the recurrence interval.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">UX, Strategist</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: recurring_reminders
+├── id (UUID, PK)
+├── organization_id (FK → organizations)
+├── client_id (FK → clients, nullable)
+├── title (VARCHAR)
+├── description (TEXT)
+├── recurrence_days (INTEGER)
+├── last_triggered_at (TIMESTAMPTZ)
+├── is_active (BOOLEAN)
+└── created_at (TIMESTAMPTZ)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>clients</code>. Dashboard already has a "recent activity" card — overdue reminders slot into that area as a new widget. Client-side logic: <code>if (now - last_triggered_at > recurrence_days * 86400000) show as overdue</code>
+                </div>
+            </div>
+
+            <!-- Feature 4.4 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">4</div>
+                    <div class="feature-title">AI Usage Budget Tracker</div>
+                </div>
+                <p class="feature-description">Tracks token/request usage per AI provider per day, warns the team before hitting free-tier rate limits (e.g., Groq: 14,400 req/day; Cerebras: 1M tokens/day). The dashboard shows a simple usage bar per provider so you never get surprised by a rate-limit error.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Expert</div>
+                        <div class="meta-value">Architect</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Schema change:</strong> Add 3 columns to existing <code>ai_providers</code> table:
+                    <ul style="margin-top: 0.5rem; margin-left: 1rem;">
+                        <li><code>daily_request_limit INTEGER</code></li>
+                        <li><code>daily_token_limit INTEGER</code></li>
+                        <li><code>usage_reset_utc_hour INTEGER DEFAULT 0</code></li>
+                    </ul>
+                    Usage is derived at runtime by counting <code>generated_comments</code> rows by provider and date. No new tracking table needed — the data is already there.
+                </div>
+            </div>
+        </div>
+
+        <!-- REPORTING & ANALYTICS SECTION -->
+        <div id="reporting" class="section">
+            <h2>5. Reporting & Analytics</h2>
+            <div class="section-intro">
+                <p>Four dashboard and reporting tools that show you what you've done for each client and where the team should focus next. Every agency needs the "monthly report" feature — this automates it.</p>
+            </div>
+
+            <!-- Feature 5.1 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">1</div>
+                    <div class="feature-title">Per-Client Activity Report (Exportable)</div>
+                </div>
+                <p class="feature-description">One-click generation of a per-client monthly summary report: comments generated, comments used, platforms engaged, competitor sightings logged, content outlines created. Rendered as a printable/PDF-friendly page. The AI can optionally write a 2–3 sentence executive summary for each client tying the numbers to impact.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">UX, Strategist, Architect</div>
+                    </div>
+                    <div class="meta-item complexity-medium">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Medium</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW VIEW: client_monthly_summary
+├── client_id
+├── client_name
+├── month
+├── comments_generated
+├── comments_used
+├── platforms_active
+└── sightings_logged
+
+(Aggregates from generated_comments,
+competitor_sightings, content_outlines)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> No new tables. The data already exists across <code>generated_comments</code>, <code>competitor_sightings</code>, <code>content_outlines</code>. A new SQL view aggregates it. The AI-written summary is one <code>generateCompletion()</code> call with stats as context.
+                </div>
+            </div>
+
+            <!-- Feature 5.2 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">2</div>
+                    <div class="feature-title">Comment Style Performance Dashboard</div>
+                </div>
+                <p class="feature-description">Shows which comment styles (conversational, professional, question-based, value-add, brief) are actually getting selected and marked as used, broken down by client and platform. Surfaces patterns: "Your construction client's LinkedIn comments are 60% professional — but on Facebook, question-based wins 70% of the time." Actionable intel that feeds back into prompt tuning.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Strategist, Architect</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW VIEW: comment_style_performance
+├── client_id
+├── platform
+├── style (conversational|professional|question|value-add|brief)
+├── times_selected
+└── times_used
+
+(Queries existing generated_comments.generated_options
+and selected_option_style)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>generated_comments</code>. Data is already captured in <code>generated_options</code> (JSONB), <code>selected_option_style</code>, and <code>is_used</code>. Zero schema changes. New view + dashboard page only.
+                </div>
+            </div>
+
+            <!-- Feature 5.3 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">3</div>
+                    <div class="feature-title">Engagement Velocity Tracker</div>
+                </div>
+                <p class="feature-description">Tracks how many comments/engagements are happening per client per week, surfacing trend lines: is a client's engagement volume going up or down? Flags clients that have gone quiet (zero activity in 7+ days). This is the "are we actually doing the work?" dashboard for a high-volume agency.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Architect, UX</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>generated_comments</code>. Derived via weekly bucketing on <code>created_at</code> by <code>client_id</code>. The "gone quiet" flag is a client-side calculation. No schema changes, new dashboard widget only.
+                </div>
+            </div>
+
+            <!-- Feature 5.4 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">4</div>
+                    <div class="feature-title">Competitor Activity Heatmap</div>
+                </div>
+                <p class="feature-description">Visual grid: competitors on one axis, locations (Facebook groups, subreddits, forums, etc.) on the other. Cell color indicates recency and frequency of sightings. Immediately shows where competitors are most active and where they have gone silent. Replaces scanning through a flat sighting list.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">UX, Strategist</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>competitor_sightings</code>, <code>competitors`, the <code>competitor_sighting_insights</code> view. Pure UI component — no schema changes.
+                </div>
+            </div>
+        </div>
+
+        <!-- OFF-PAGE ENGAGEMENT SECTION -->
+        <div id="offpage" class="section">
+            <h2>6. Off-Page & Non-Social Engagement</h2>
+            <div class="section-intro">
+                <p>Four tools that turn engagement beyond social media into actionable workflows: forums, reviews, directories, and link building. These are the channels agencies often neglect but clients ask about.</p>
+            </div>
+
+            <!-- Feature 6.1 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">1</div>
+                    <div class="feature-title">Forum/Community Engagement Queue</div>
+                </div>
+                <p class="feature-description">Turns the static <code>client_industry_sites</code> list into a daily action list. Team can log "visited today," mark a site as needing a response, and queue content for generation. Surfaces which sites need attention most and which haven't been touched in weeks.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">UX, Strategist</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Schema changes:</strong> Add 3 columns to existing <code>client_industry_sites</code>:
+                    <ul style="margin-top: 0.5rem; margin-left: 1rem;">
+                        <li><code>last_visited_at TIMESTAMPTZ</code></li>
+                        <li><code>visit_frequency_days INTEGER DEFAULT 7</code></li>
+                        <li><code>is_priority BOOLEAN DEFAULT false</code></li>
+                    </ul>
+                    No new table. The UI is a filtered/sorted view with "Mark Visited" buttons.
+                </div>
+            </div>
+
+            <!-- Feature 6.2 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">2</div>
+                    <div class="feature-title">Review Response Generator</div>
+                </div>
+                <p class="feature-description">For clients who receive online reviews (Google, Yelp, industry directories), paste the review text, select the client, and the AI generates 3 response options: one for positive reviews (thank + reinforce), one for neutral (engage + add value), one for negative (acknowledge + resolve). Each response uses the client's voice and tone.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Content, Strategist</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: review_responses
+├── id (UUID, PK)
+├── client_id (FK → clients)
+├── organization_id (FK → organizations)
+├── review_text (TEXT)
+├── review_source (VARCHAR) ["google", "yelp", "houzz", "other"]
+├── review_sentiment (positive|neutral|negative)
+├── generated_responses (JSONB)
+│   └── [{"tone":"thank|engage|resolve", "text":"..."}]
+├── selected_response_index (INTEGER)
+├── is_used (BOOLEAN)
+└── created_at (TIMESTAMPTZ)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>clients</code>, existing AI pipeline. Sentiment detection is done by the AI in the same call that generates the responses (single prompt, structured JSON output).
+                </div>
+            </div>
+
+            <!-- Feature 6.3 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">3</div>
+                    <div class="feature-title">Directory Listing Copywriter</div>
+                </div>
+                <p class="feature-description">For clients that need to be listed on industry directories (Yelp, Houzz, Angi, Google Business, etc.), select the directory type and the AI generates the listing copy: business name formatting, tagline, short + long descriptions (SEO-optimized, within character limits), and service categories. Each directory has different constraints — the prompt respects those automatically.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Strategist, Content</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: directory_listings
+├── id (UUID, PK)
+├── client_id (FK → clients)
+├── organization_id (FK → organizations)
+├── directory_name (VARCHAR) ["Yelp", "Houzz", "Angi", "Google Business", ...]
+├── listing_data (JSONB)
+│   └── {"tagline":"...", "short_description":"...", "long_description":"...", "categories":[...]}
+├── status (draft|submitted|live)
+└── created_at (TIMESTAMPTZ)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>clients</code>. Directory character limits stored as a client-side config object (not a table — there are only ~10 common directories and limits change rarely).
+                </div>
+            </div>
+
+            <!-- Feature 6.4 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">4</div>
+                    <div class="feature-title">Link Building Prospect Finder</div>
+                </div>
+                <p class="feature-description">Given a client's industry and target keywords, the AI generates a list of link-building prospect types and specific angles: "Guest post opportunities on [type]," "Resource page candidates in [niche]," "Broken link replacement prospects in [topic]," "Skyscraper opportunities," "Local citation sources," "PR mention angles." Not a scraper — an ideation and prioritization tool that replaces hours of manual research.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Expert</div>
+                        <div class="meta-value">Strategist</div>
+                    </div>
+                    <div class="meta-item complexity-medium">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Medium</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: link_building_prospects
+├── id (UUID, PK)
+├── client_id (FK → clients)
+├── organization_id (FK → organizations)
+├── prospect_type (guest_post|resource_page|broken_link|skyscraper|local_citation|pr_mention)
+├── target_keyword (VARCHAR)
+├── suggestions (JSONB)
+│   └── [{"site_type":"...","why":"...","outreach_angle":"...","priority":"high|medium|low"}]
+└── generated_at (TIMESTAMPTZ)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>clients</code>, <code>client_keywords</code>. AI-only output — no crawling or scraping. The value is the strategy.
+                </div>
+            </div>
+        </div>
+
+        <!-- EMAIL & AD COPY SECTION -->
+        <div id="email" class="section">
+            <h2>7. Email & Ad Copy</h2>
+            <div class="section-intro">
+                <p>Three tools for generating copy across email and paid advertising channels. These integrate seamlessly with the content creation tools from Section 2.</p>
+            </div>
+
+            <!-- Feature 7.1 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">1</div>
+                    <div class="feature-title">Email Newsletter Generator</div>
+                </div>
+                <p class="feature-description">Select a client and pick 2–3 topics (from existing content outlines, blog posts, or typed manually). The AI produces a full newsletter: 3 subject line options, preview text, intro paragraph, per-topic summaries with engagement hooks, and a closing CTA. Saved as a draft for review before sending to the client or their list.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Content, UX</div>
+                    </div>
+                    <div class="meta-item complexity-medium">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Medium</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: email_newsletters
+├── id (UUID, PK)
+├── client_id (FK → clients)
+├── organization_id (FK → organizations)
+├── subject_options (JSONB) ["Subject 1", "Subject 2", "Subject 3"]
+├── selected_subject (VARCHAR)
+├── preview_text (VARCHAR)
+├── body_sections (JSONB)
+│   └── [{"type":"intro|topic|cta", "heading":"...", "content":"..."}]
+├── linked_outline_ids (JSONB) [array of content_outlines UUIDs]
+├── status (draft|in_review|sent)
+└── created_at (TIMESTAMPTZ)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>clients</code> (voice), optionally <code>content_outlines</code> as topic source material. The <code>linked_outline_ids</code> is a JSONB array — no junction table needed at this scale.
+                </div>
+            </div>
+
+            <!-- Feature 7.2 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">2</div>
+                    <div class="feature-title">Ad Copy Generator (Multi-Format)</div>
+                </div>
+                <p class="feature-description">Given a client, a product/service focus, and target audience, the AI generates ad copy for multiple channels in one shot: Google Ads (headlines + descriptions within 30-char/90-char limits), Meta/Facebook ad (primary text + headline + CTA button text), and LinkedIn sponsored content blurb. All output in one view for the team to review and deploy. Character limits are baked into the prompt.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Content, Strategist</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: ad_copy_sets
+├── id (UUID, PK)
+├── client_id (FK → clients)
+├── organization_id (FK → organizations)
+├── campaign_focus (TEXT)
+├── target_audience (TEXT)
+├── ad_formats (JSONB)
+│   └── {
+│       "google_ads": {"headlines":[...], "descriptions":[...]},
+│       "meta": {"primary_text":"...", "headline":"...", "cta":"..."},
+│       "linkedin": {"text":"..."}
+│   }
+├── status (draft|in_review|active|paused)
+└── created_at (TIMESTAMPTZ)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>clients</code>. Single AI call, structured JSON output. Character limit constraints are in the prompt, not the database.
+                </div>
+            </div>
+
+            <!-- Feature 7.3 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">3</div>
+                    <div class="feature-title">Subject Line A/B Test Generator</div>
+                </div>
+                <p class="feature-description">For any email or ad campaign, generate 4–6 subject line variants using different psychological hooks: curiosity gaps, urgency, personalization, value proposition, social proof, and scarcity. The team picks two to test, and the tool tracks which one they ultimately used — building a per-client record of what messaging patterns win.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">Content, Strategist</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-section">
+                    <pre>NEW TABLE: subject_line_tests
+├── id (UUID, PK)
+├── client_id (FK → clients)
+├── organization_id (FK → organizations)
+├── context (TEXT)
+├── variants (JSONB)
+│   └── [{"text":"...", "hook_type":"curiosity|urgency|value|social_proof|personalization"}]
+├── selected_variant_index (INTEGER)
+└── created_at (TIMESTAMPTZ)</pre>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>clients</code>. Lightweight standalone table. Can feed into <code>email_newsletters</code> or <code>ad_copy_sets</code> by the team manually linking them.
+                </div>
+            </div>
+        </div>
+
+        <!-- WORKFLOW & UX IMPROVEMENTS SECTION -->
+        <div id="workflow" class="section">
+            <h2>8. Workflow & UX Improvements</h2>
+            <div class="section-intro">
+                <p>Five UI and workflow improvements that reduce friction and cognitive load for a team juggling 20+ clients. These are "quality of life" features that compound daily.</p>
+            </div>
+
+            <!-- Feature 8.1 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">1</div>
+                    <div class="feature-title">Cross-Client Quick-Switch Bar (Cmd+K / Ctrl+K)</div>
+                </div>
+                <p class="feature-description">A persistent command palette at the top of the page (activated by Cmd+K on Mac or Ctrl+K on Windows/Linux) that lets the team jump to any client, start a comment generation for a specific client, open a competitor's sighting log, or navigate to any page — without clicking through the sidebar. Essential for rapid context-switching across 20+ clients.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Expert</div>
+                        <div class="meta-value">UX</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>useClients</code> hook, existing routing in <code>App.jsx</code>. Pure UI component. No schema changes.
+                </div>
+            </div>
+
+            <!-- Feature 8.2 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">2</div>
+                    <div class="feature-title">Bulk Client Actions</div>
+                </div>
+                <p class="feature-description">On the Clients list page, add checkboxes to select multiple clients. Once selected, perform bulk operations: deactivate all at once, export all as CSV/JSON, or batch-create content calendar items for the week. Eliminates the one-at-a-time friction that dominates agency workflows.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">UX, Architect</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing <code>clients`, `useClients` hook. No schema changes for the core feature. Calendar item creation writes to <code>content_calendar_items</code> if that feature exists. UI-only addition to the Clients page.
+                </div>
+            </div>
+
+            <!-- Feature 8.3 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">3</div>
+                    <div class="feature-title">Contextual "What to Do Next" Suggestions</div>
+                </div>
+                <p class="feature-description">On the client detail page, after viewing a client's profile, surface 2–3 contextual action suggestions based on activity gaps: "No comments generated for this client in 5 days — generate one now," "Competitor XYZ was spotted in a high-priority location 2 days ago — respond here," "This client has no blog outline yet — create one." Reduces decision fatigue and keeps the team focused.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">UX, Content</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> All existing tables. No schema changes. Client-side logic reads existing data and surfaces recommendations. New utility function + UI widget on ClientDetail page.
+                </div>
+            </div>
+
+            <!-- Feature 8.4 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">4</div>
+                    <div class="feature-title">Client Health Score</div>
+                </div>
+                <p class="feature-description">Each client gets an auto-calculated "health score" (0–100) based on: profile completeness (keywords filled, sample comments present, voice prompt quality), recent engagement activity (comments generated in last 14 days), competitor monitoring activity (sightings logged recently). Displayed as a badge on each client card. Red-flags clients that are falling behind and need attention.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Experts</div>
+                        <div class="meta-value">UX, Architect</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> All existing tables. No schema changes. Score computed client-side from:
+                    <ul style="margin-top: 0.5rem; margin-left: 1rem;">
+                        <li>Profile completeness: count of filled fields in <code>clients</code>, <code>client_keywords</code>, <code>client_sample_comments</code></li>
+                        <li>Activity: count of <code>generated_comments</code> in last 14 days</li>
+                        <li>Monitoring: count of <code>competitor_sightings</code> in last 14 days</li>
+                    </ul>
+                    New utility function + Badge on ClientCard component.
+                </div>
+            </div>
+
+            <!-- Feature 8.5 -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-number">5</div>
+                    <div class="feature-title">Dark Mode + Accessibility Audit Integration</div>
+                </div>
+                <p class="feature-description">Complete the dark mode implementation across all pages (CSS variables are already in place). Run the existing accessibility audit (<code>scripts/a11y-audit.cjs</code>) as a CI check so contrast, focus states, and WCAG issues don't regress. Your codebase already has the tooling — this integrates it end-to-end.</p>
+                <div class="feature-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Expert</div>
+                        <div class="meta-value">UX</div>
+                    </div>
+                    <div class="meta-item complexity-low">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value">Low</div>
+                    </div>
+                </div>
+                <div class="schema-note">
+                    <strong>Builds on:</strong> Existing dark mode CSS variables (visible in Dashboard.jsx), existing a11y tooling. Pure CSS/component work. The audit script at <code>/scripts/a11y-audit.cjs</code> already exists. GitHub workflow at <code>/.github/workflows/a11y-and-visual-qa.yml</code> already runs it.
+                </div>
+            </div>
+        </div>
+
+        <!-- BUILD ORDER / PRIORITY SECTION -->
+        <div id="priority" class="section">
+            <h2>Recommended Build Order</h2>
+            <div class="section-intro">
+                <p>The panel agreed on this sequence based on impact-to-effort ratio, given your existing infrastructure. This ordering lets you see value immediately while building the foundation for more complex features.</p>
+            </div>
+
+            <div class="priority-grid">
+                <div class="priority-item">
+                    <div class="priority-number">1</div>
+                    <div class="priority-name">Batch Comment Generation Queue</div>
+                    <div class="priority-section">Scheduling & Automation</div>
+                    <div class="priority-rationale"><strong>Why first:</strong> Highest daily-workflow leverage. One button to generate comments for 5–10 pieces of content across 20+ clients. This is the single feature that transforms your operation from manual to batched.</div>
+                </div>
+
+                <div class="priority-item">
+                    <div class="priority-number">2</div>
+                    <div class="priority-name">Cross-Client Quick-Switch Bar</div>
+                    <div class="priority-section">Workflow UX</div>
+                    <div class="priority-rationale"><strong>Why next:</strong> Lowest effort, biggest friction reduction. Your team context-switches constantly — Cmd+K navigation is table stakes at this scale.</div>
+                </div>
+
+                <div class="priority-item">
+                    <div class="priority-number">3</div>
+                    <div class="priority-name">Content Repurposing Engine</div>
+                    <div class="priority-section">Content & Repurposing</div>
+                    <div class="priority-rationale"><strong>Why next:</strong> Reuses your existing platform prompts directly. Immediate time savings: one blog post → 3 social posts + newsletter blurb + email subject lines, all in one pass.</div>
+                </div>
+
+                <div class="priority-item">
+                    <div class="priority-number">4</div>
+                    <div class="priority-name">Content Calendar Board</div>
+                    <div class="priority-section">Scheduling & Automation</div>
+                    <div class="priority-rationale"><strong>Why next:</strong> Ties all content creation (Sections 2–3) into one central planning surface. Without this, content outlines are scattered and hard to manage across a team.</div>
+                </div>
+
+                <div class="priority-item">
+                    <div class="priority-number">5</div>
+                    <div class="priority-name">Client Health Score</div>
+                    <div class="priority-section">Workflow UX</div>
+                    <div class="priority-rationale"><strong>Why next:</strong> Zero schema changes. Surfaces gaps the team is currently blind to. Red-flags neglected clients instantly on the dashboard.</div>
+                </div>
+
+                <div class="priority-item">
+                    <div class="priority-number">6</div>
+                    <div class="priority-name">Per-Client Activity Report</div>
+                    <div class="priority-section">Reporting & Analytics</div>
+                    <div class="priority-rationale"><strong>Why next:</strong> The "show the client what we did this month" feature every agency needs. Demonstrates ROI. Exportable/printable. Builds client confidence.</div>
+                </div>
+
+                <div class="priority-item">
+                    <div class="priority-number">7</div>
+                    <div class="priority-name">AI Keyword Cluster Generator</div>
+                    <div class="priority-section">SEO Suite</div>
+                    <div class="priority-rationale"><strong>Why next:</strong> Foundation for all other SEO features (1.2–1.5). Once this exists, the rest of the SEO suite snaps together easily.</div>
+                </div>
+
+                <div class="priority-item">
+                    <div class="priority-number">8</div>
+                    <div class="priority-name">Review Response Generator</div>
+                    <div class="priority-section">Off-Page Engagement</div>
+                    <div class="priority-rationale"><strong>Why next:</strong> Low effort, high value for service-business clients (contractors, salons, restaurants, etc.). Immediate client deliverable: review responses.</div>
+                </div>
+
+                <div class="priority-item">
+                    <div class="priority-number">9</div>
+                    <div class="priority-name">Blog Post Outline Generator</div>
+                    <div class="priority-section">Content & Repurposing</div>
+                    <div class="priority-rationale"><strong>Why next:</strong> Unlocks all multimedia outline types (3.1–3.5) as variants of the same table and prompt structure. Once this exists, you can generate podcast outlines, video scripts, infographic briefs, etc. with minimal additional effort.</div>
+                </div>
+
+                <div class="priority-item">
+                    <div class="priority-number">10</div>
+                    <div class="priority-name">Ad Copy Generator</div>
+                    <div class="priority-section">Email & Ad Copy</div>
+                    <div class="priority-rationale"><strong>Why next:</strong> Standalone, low complexity, immediate client deliverable. Generates multi-format ad copy (Google, Meta, LinkedIn) in one shot. No dependencies on other features.</div>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 3rem;">Beyond the Top 10</h2>
+            <div class="section-intro">
+                <p>After you've built the top 10, the remaining features follow naturally:</p>
+                <ul style="margin-top: 1rem; margin-left: 1.5rem; color: var(--text-secondary);">
+                    <li><strong>11–15:</strong> Other SEO tools (page briefs, local checklists, technical audits, gap finder), email newsletters, and more off-page tools</li>
+                    <li><strong>16–20:</strong> All remaining multimedia and content outlines, link building, directory listings, and analytics dashboards</li>
+                    <li><strong>21–25:</strong> The remaining workflow UX polish and advanced features like recurring reminders, A/B subject lines, etc.</li>
+                </ul>
+                <p style="margin-top: 1rem;"><strong>The key insight:</strong> Once you have the batch queue (#1) and content calendar (#4), you've unlocked the ability to scale. Everything else amplifies that foundation.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Maximus Engagimus Expert Panel Report</p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Panel: Senior Developer/Tech Architect | UI/UX Specialist | Digital Marketing Strategist | Communications & Content Expert</p>
+    </footer>
+
+    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</div>
+
+    <script>
+        function switchSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(s => s.classList.remove('active'));
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Update active button
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Smooth scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Back to top button
+        const backToTopBtn = document.getElementById('backToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Keyboard shortcut: Esc to go back to overview
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                switchSection('overview');
+                document.querySelector('.nav-btn').click();
+            }
+        });
+    </script>
+</body>
+</html>
