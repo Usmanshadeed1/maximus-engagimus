@@ -34,10 +34,11 @@ export function useClients(options = {}) {
     try {
       setLoading(true);
       setError(null);
-      // Guard against hanging network requests by adding a timeout (increased to 20s for cold-start)
+      // Faster timeout (8s) - fail fast instead of hanging
+      // If it fails, we keep cached data instead of showing empty
       const data = await Promise.race([
         getClients(activeOnly),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out while fetching clients')), 20000)),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out while fetching clients')), 8000)),
       ]);
       setClients(data || []);
     } catch (err) {

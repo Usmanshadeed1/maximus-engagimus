@@ -57,7 +57,7 @@ export function AuthProvider({ children }) {
             } catch (err) {
               if (err?.name === 'AbortError' && attempt === 0) {
                 console.warn('[Auth] getSession aborted; retrying once...');
-                await new Promise((r) => setTimeout(r, 500));
+                await new Promise((r) => setTimeout(r, 100));
                 continue;
               }
               throw err;
@@ -66,9 +66,9 @@ export function AuthProvider({ children }) {
           return { session: null, error: null };
         };
 
-        // Add a longer timeout (8 seconds) as fallback
+        // Add a timeout (3 seconds) as fallback - fast fail for login page speed
         const timeoutPromise = new Promise((_, rej) => 
-          setTimeout(() => rej(new Error('auth-init-timeout')), 8000)
+          setTimeout(() => rej(new Error('auth-init-timeout')), 3000)
         );
 
         try {
@@ -92,7 +92,7 @@ export function AuthProvider({ children }) {
               const profileData = await Promise.race([
                 getUserProfile(),
                 new Promise((_, reject) => 
-                  setTimeout(() => reject(new Error('Profile fetch timeout')), 20000)
+                  setTimeout(() => reject(new Error('Profile fetch timeout')), 8000)
                 ),
               ]);
               
@@ -146,7 +146,7 @@ export function AuthProvider({ children }) {
               const profileData = await Promise.race([
                 getUserProfile(),
                 new Promise((_, reject) => 
-                  setTimeout(() => reject(new Error('Profile fetch timeout')), 20000)
+                  setTimeout(() => reject(new Error('Profile fetch timeout')), 8000)
                 ),
               ]);
               
@@ -361,7 +361,7 @@ export function AuthProvider({ children }) {
       const profileData = await Promise.race([
         getUserProfile(),
         new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Profile fetch timeout')), 20000)
+          setTimeout(() => reject(new Error('Profile fetch timeout')), 8000)
         ),
       ]);
       
