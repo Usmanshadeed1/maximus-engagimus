@@ -7,6 +7,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { supabase, getUserProfile } from '../lib/supabase';
+import { getCached, setCached, clearCache } from '../lib/cache';
 
 // Create the context
 const AuthContext = createContext(null);
@@ -20,6 +21,20 @@ export function AuthProvider({ children }) {
   const [organization, setOrganization] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Track last session check time to avoid over-checking
+  const lastSessionCheckRef = useCallback(() => {
+    const key = 'lastSessionCheck';
+    const now = Date.now();
+    const last = parseInt(localStorage.getItem(key) || '0', 10);
+    
+    // Only check if 1 hour has passed
+    if (now - last > 3600000) {
+      localStorage.setItem(key, now.toString());
+      return true;
+    }
+    return false;
+  }, []);
 
   /**
    * Sign in with email and password
@@ -66,9 +81,9 @@ export function AuthProvider({ children }) {
           return { session: null, error: null };
         };
 
-        // Add a timeout (3 seconds) as fallback - fast fail for login page speed
+        // Add a timeout (2 seconds) as fallback - fast fail for login page speed
         const timeoutPromise = new Promise((_, rej) => 
-          setTimeout(() => rej(new Error('auth-init-timeout')), 3000)
+          setTimeout(() => rej(new Error('auth-init-timeout')), 2000)
         );
 
         try {
@@ -89,28 +104,43 @@ export function AuthProvider({ children }) {
           if (session?.user) {
             // Fetch profile FIRST before setting user, so avatar shows correctly immediately
             try {
+              // Try cache first, then fetch fresh in background
+              const cached = getCached('userProfile');
+              if (cached) {
+                // Show cached profile immediately
+                setUser(session.user);
+                setProfile(cached);
+                setOrganization(cached?.organization || null);
+              }
+
+              // Fetch fresh profile with timeout
               const profileData = await Promise.race([
                 getUserProfile(),
                 new Promise((_, reject) => 
-                  setTimeout(() => reject(new Error('Profile fetch timeout')), 8000)
+                  setTimeout(() => reject(new Error('Profile fetch timeout')), 2000)
                 ),
               ]);
               
-              if (mounted) {
-                // Now set both user and profile together so UI renders complete data
+              if (mounted && profileData) {
+                // Cache for 10 minutes
+                setCached('userProfile', profileData, 10 * 60 * 1000);
                 setUser(session.user);
-                if (profileData) {
-                  setProfile(profileData);
-                  setOrganization(profileData?.organization || null);
-                }
+                setProfile(profileData);
+                setOrganization(profileData?.organization || null);
               }
             } catch (profileErr) {
               console.error('Error fetching profile:', profileErr);
               if (mounted) {
-                // If profile fetch fails on initial load, at least set the user
-                // Profile can be loaded later when network improves
-                setUser(session.user);
-                // Don't set profile to null - let it retry when visibility changes or auth refreshes
+                // Fall back to cached profile if fetch fails
+                const cached = getCached('userProfile');
+                if (!cached) {
+                  // No cache available, set user without profile
+                  setUser(session.user);
+                } else {
+                  setUser(session.user);
+                  setProfile(cached);
+                  setOrganization(cached?.organization || null);
+                }
               }
             }
           } else {
@@ -135,40 +165,49 @@ export function AuthProvider({ children }) {
 
     initializeAuth();
 
-    // Listen for auth changes
+    // Listen for auth changes, but be smart about session validation
+    // Only fetch profile on explicit auth events (SIGNED_IN, TOKEN_REFRESHED)
+    // Don't re-fetch on visibility changes to avoid unnecessary server calls
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (mounted) {
           if (session?.user) {
-            // Fetch profile FIRST before setting user (for all session states)
-            // This includes SIGNED_IN, TOKEN_REFRESHED, and restored sessions
-            try {
-              const profileData = await Promise.race([
-                getUserProfile(),
-                new Promise((_, reject) => 
-                  setTimeout(() => reject(new Error('Profile fetch timeout')), 8000)
-                ),
-              ]);
-              
-              if (mounted) {
-                // Set user and profile together so UI renders complete data
-                setUser(session.user);
-                if (profileData) {
-                  setProfile(profileData);
-                  setOrganization(profileData?.organization || null);
-                } else {
-                  setProfile(null);
-                  setOrganization(null);
+            // Only fetch profile on explicit sign-in (fresh login)
+            // Skip TOKEN_REFRESHED and visibility changes - just use cached profile
+            if (event === 'SIGNED_IN') {
+              try {
+                const profileData = await Promise.race([
+                  getUserProfile(),
+                  new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Profile fetch timeout')), 2000)
+                  ),
+                ]);
+                
+                if (mounted) {
+                  setUser(session.user);
+                  if (profileData) {
+                    setCached('userProfile', profileData, 10 * 60 * 1000);
+                    setProfile(profileData);
+                    setOrganization(profileData?.organization || null);
+                  }
+                }
+              } catch (profileErr) {
+                console.error('Error fetching profile on sign in:', profileErr);
+                if (mounted) {
+                  setUser(session.user);
+                  // Keep existing profile on failure
                 }
               }
-            } catch (profileErr) {
-              console.error('Error fetching profile on session change:', profileErr);
-              if (mounted) {
-                // If profile fetch fails but we already have a profile cached, keep it
-                // Only clear profile if we don't have one yet
+            } else {
+              // For all other events (INITIAL_SESSION, TOKEN_REFRESHED, visibility changes, etc)
+              // Just restore from cache without fetching
+              const cached = getCached('userProfile');
+              if (cached) {
                 setUser(session.user);
-                // Don't set profile to null - keep the existing one if it exists
-                // This prevents the avatar from flashing back to "T" when visibility changes or network is slow
+                setProfile(cached);
+                setOrganization(cached?.organization || null);
+              } else {
+                setUser(session.user);
               }
             }
           } else {
@@ -275,6 +314,9 @@ export function AuthProvider({ children }) {
       // Clear dev mock auth flag if it exists
       localStorage.removeItem('dev:mockAuth');
       
+      // Clear cached profile
+      clearCache('userProfile');
+      
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
@@ -361,7 +403,7 @@ export function AuthProvider({ children }) {
       const profileData = await Promise.race([
         getUserProfile(),
         new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Profile fetch timeout')), 8000)
+          setTimeout(() => reject(new Error('Profile fetch timeout')), 2000)
         ),
       ]);
       

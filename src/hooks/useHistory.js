@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { getGeneratedComments, getCommentStats } from '../lib/supabase';
+import { getCached, setCached } from '../lib/cache';
 import { toast } from '../components/ui/Toast';
 
 /**
@@ -26,39 +27,54 @@ export function useHistory(options = {}) {
 
   const fetchHistory = useCallback(async (offset = 0) => {
     try {
-      setLoading(true);
-      setError(null);
+      // Return cached data immediately if available (no loading for offset 0)
+      const cacheKey = `history_${clientId}_${platform}`;
+      const cached = getCached(cacheKey);
       
-      // Add timeout to prevent hanging
-      const data = await Promise.race([
-        getGeneratedComments({
-          clientId,
-          platform,
-          limit: limit + 1, // Fetch one extra to check if there's more
-          offset,
-        }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Request timed out while fetching history')), 15000)
-        ),
-      ]);
-
-      // Check if there are more results
-      if (data.length > limit) {
-        setHasMore(true);
-        data.pop(); // Remove the extra item
+      if (offset === 0 && cached) {
+        setHistory(cached);
+        setError(null);
+        // Don't show loading if we have cache
       } else {
-        setHasMore(false);
+        setLoading(true);
+        setError(null);
       }
+      
+      // Fetch fresh data with faster timeout (2s)
+      try {
+        const data = await Promise.race([
+          getGeneratedComments({
+            clientId,
+            platform,
+            limit: limit + 1,
+            offset,
+          }),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Request timed out while fetching history')), 2000)
+          ),
+        ]);
 
-      if (offset === 0) {
-        setHistory(data);
-      } else {
-        setHistory(prev => [...prev, ...data]);
+        // Check if there are more results
+        if (data.length > limit) {
+          setHasMore(true);
+          data.pop();
+        } else {
+          setHasMore(false);
+        }
+
+        if (offset === 0) {
+          setHistory(data);
+          // Cache for 5 minutes
+          setCached(cacheKey, data, 5 * 60 * 1000);
+        } else {
+          setHistory(prev => [...prev, ...data]);
+        }
+      } catch (fetchErr) {
+        // If fetch fails but we have cache, keep showing it
+        if (offset === 0 && !cached) {
+          setError(fetchErr.message);
+        }
       }
-    } catch (err) {
-      console.error('Error fetching history:', err);
-      setError(err.message);
-      // Don't show toast error for history - it's optional for dashboard
     } finally {
       setLoading(false);
     }
@@ -154,48 +170,54 @@ export function useGenerationStats() {
 
   const fetchStats = useCallback(async () => {
     try {
-      setLoading(true);
-      setError(null);
+      // Return cached stats immediately if available
+      const cached = getCached('generationStats');
       
-      // Add timeout to prevent hanging
-      const data = await Promise.race([
-        getCommentStats(),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Request timed out while fetching stats')), 15000)
-        ),
-      ]);
+      if (cached) {
+        setStats(cached);
+        setError(null);
+        // Don't show loading if we have cache
+      } else {
+        setLoading(true);
+        setError(null);
+      }
       
-      // Calculate derived stats
-      const totalGenerations = data.total_generations || 0;
-      const totalComments = data.total_comments || 0;
-      const commentsUsed = data.comments_used || 0;
-      
-      setStats({
-        totalGenerations,
-        totalCommentsGenerated: totalComments,
-        commentsUsed,
-        usageRate: totalComments > 0 ? (commentsUsed / totalComments) * 100 : 0,
-        generationsByClient: data.by_client || [],
-        generationsByPlatform: data.by_platform || [],
-        recentActivity: data.recent || [],
-        averageOptionsPerGeneration: totalGenerations > 0 
-          ? totalComments / totalGenerations 
-          : 0,
-      });
-    } catch (err) {
-      console.error('Error fetching stats:', err);
-      setError(err.message);
-      // Set default empty stats on error so dashboard still renders
-      setStats({
-        totalGenerations: 0,
-        totalCommentsGenerated: 0,
-        commentsUsed: 0,
-        usageRate: 0,
-        generationsByClient: [],
-        generationsByPlatform: [],
-        recentActivity: [],
-        averageOptionsPerGeneration: 0,
-      });
+      // Fetch fresh data with faster timeout (2s)
+      try {
+        const data = await Promise.race([
+          getCommentStats(),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Request timed out while fetching stats')), 2000)
+          ),
+        ]);
+        
+        // Calculate derived stats
+        const totalGenerations = data.total_generations || 0;
+        const totalComments = data.total_comments || 0;
+        const commentsUsed = data.comments_used || 0;
+        
+        const statsData = {
+          totalGenerations,
+          totalCommentsGenerated: totalComments,
+          commentsUsed,
+          usageRate: totalComments > 0 ? Math.round((commentsUsed / totalComments) * 100) : 0,
+          generationsByClient: data.by_client || [],
+          generationsByPlatform: data.by_platform || [],
+          recentActivity: data.recent_activity || [],
+          averageOptionsPerGeneration: totalGenerations > 0 
+            ? Math.round(totalComments / totalGenerations * 10) / 10 
+            : 0,
+        };
+        
+        setStats(statsData);
+        // Cache for 5 minutes
+        setCached('generationStats', statsData, 5 * 60 * 1000);
+      } catch (fetchErr) {
+        // If fetch fails but we have cache, keep showing it
+        if (!cached) {
+          setError(fetchErr.message);
+        }
+      }
     } finally {
       setLoading(false);
     }

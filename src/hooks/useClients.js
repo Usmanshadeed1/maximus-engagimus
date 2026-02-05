@@ -18,6 +18,7 @@ import {
   addClientIndustrySite,
   removeClientIndustrySite,
 } from '../lib/supabase';
+import { getCached, setCached, clearCache } from '../lib/cache';
 import { toast } from '../components/ui/Toast';
 
 /**
@@ -32,19 +33,37 @@ export function useClients(options = {}) {
 
   const fetchClients = useCallback(async () => {
     try {
-      setLoading(true);
-      setError(null);
-      // Faster timeout (8s) - fail fast instead of hanging
-      // If it fails, we keep cached data instead of showing empty
-      const data = await Promise.race([
-        getClients(activeOnly),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out while fetching clients')), 8000)),
-      ]);
-      setClients(data || []);
-    } catch (err) {
-      console.error('Error fetching clients:', err);
-      setError(err.message);
-      toast.error('Failed to load clients');
+      // Return cached data immediately if available (no loading state)
+      const cached = getCached('clients');
+      if (cached) {
+        setClients(cached);
+        setError(null);
+        // Don't set loading=true if we have cache - user sees data instantly
+      } else {
+        // No cache, show loading state
+        setLoading(true);
+        setError(null);
+      }
+
+      // Fetch fresh data in background with timeout
+      try {
+        const data = await Promise.race([
+          getClients(activeOnly),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out while fetching clients')), 2000)),
+        ]);
+        
+        if (data) {
+          setClients(data || []);
+          // Cache for 10 minutes
+          setCached('clients', data, 10 * 60 * 1000);
+        }
+      } catch (fetchErr) {
+        // Fetch failed, but we keep cached data visible if available
+        if (!cached) {
+          setError(fetchErr.message);
+          toast.error('Failed to load clients');
+        }
+      }
     } finally {
       setLoading(false);
     }
@@ -58,12 +77,34 @@ export function useClients(options = {}) {
 
   const create = async (clientData) => {
     try {
+      // Optimistic update - add to UI immediately
+      const optimisticClient = {
+        id: `temp-${Date.now()}`,
+        ...clientData,
+        created_at: new Date().toISOString(),
+      };
+      
+      setClients(prev => [...prev, optimisticClient]);
+
+      // Then make the actual API call
       const newClient = await createSupabaseClient(clientData);
-      setClients(prev => [...prev, newClient]);
+      
+      // Replace optimistic with real data
+      setClients(prev =>
+        prev.map(c => (c.id === optimisticClient.id ? newClient : c))
+      );
+      
+      clearCache('clients');
       toast.success('Client created successfully');
       return { data: newClient, error: null };
     } catch (err) {
       console.error('Error creating client:', err);
+      
+      // Rollback - remove optimistic update
+      setClients(prev =>
+        prev.filter(c => !c.id.startsWith('temp-'))
+      );
+      
       toast.error('Failed to create client');
       return { data: null, error: err };
     }
@@ -71,14 +112,27 @@ export function useClients(options = {}) {
 
   const update = async (clientId, updates) => {
     try {
+      // Optimistic update - update UI immediately
+      const prevClients = [...clients]; // Save current state for rollback
+      setClients(prev =>
+        prev.map(c => (c.id === clientId ? { ...c, ...updates } : c))
+      );
+
+      // Then make the actual API call
       const updatedClient = await updateClient(clientId, updates);
       setClients(prev =>
         prev.map(c => (c.id === clientId ? { ...c, ...updatedClient } : c))
       );
+      
+      clearCache('clients');
       toast.success('Client updated successfully');
       return { data: updatedClient, error: null };
     } catch (err) {
       console.error('Error updating client:', err);
+      
+      // Rollback to previous state on error
+      setClients(prevClients);
+      
       toast.error('Failed to update client');
       return { data: null, error: err };
     }
@@ -86,12 +140,22 @@ export function useClients(options = {}) {
 
   const remove = async (clientId) => {
     try {
-      await deleteClient(clientId);
+      // Optimistic update - remove from UI immediately
+      const prevClients = [...clients]; // Save for rollback
       setClients(prev => prev.filter(c => c.id !== clientId));
+
+      // Then make the actual API call
+      await deleteClient(clientId);
+      
+      clearCache('clients');
       toast.success('Client deleted successfully');
       return { error: null };
     } catch (err) {
       console.error('Error deleting client:', err);
+      
+      // Rollback on error
+      setClients(prevClients);
+      
       toast.error('Failed to delete client');
       return { error: err };
     }
@@ -128,18 +192,36 @@ export function useClient(clientId) {
     }
 
     try {
-      setLoading(true);
-      setError(null);
-      // Guard against hanging network requests by adding a timeout (increased to 20s for cold-start)
-      const data = await Promise.race([
-        getClient(clientId),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out while fetching client')), 20000)),
-      ]);
-      setClient(data);
-    } catch (err) {
-      console.error('Error fetching client:', err);
-      setError(err.message);
-      toast.error('Failed to load client');
+      // Return cached client data immediately if available
+      const cacheKey = `client_${clientId}`;
+      const cached = getCached(cacheKey);
+      
+      if (cached) {
+        setClient(cached);
+        setError(null);
+        // Don't show loading if we have cache
+      } else {
+        setLoading(true);
+        setError(null);
+      }
+
+      // Fetch fresh data with faster timeout (2s)
+      try {
+        const data = await Promise.race([
+          getClient(clientId),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out while fetching client')), 2000)),
+        ]);
+        
+        setClient(data);
+        // Cache for 10 minutes
+        setCached(cacheKey, data, 10 * 60 * 1000);
+      } catch (fetchErr) {
+        // If fetch fails but we have cache, keep showing it
+        if (!cached) {
+          setError(fetchErr.message);
+          toast.error('Failed to load client');
+        }
+      }
     } finally {
       setLoading(false);
     }
