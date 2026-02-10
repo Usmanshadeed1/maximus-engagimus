@@ -110,8 +110,8 @@ export default function AIProviderForm({
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Template selector (only for new providers) */}
       {!isEdit && (
-        <div className="bg-gray-50 rounded-lg p-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="bg-gray-50 dark:bg-[#3b4cca52] rounded-lg p-4">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Quick Setup
           </label>
           <Dropdown
@@ -216,12 +216,12 @@ export default function AIProviderForm({
       </div>
 
       {/* API Key Sources */}
-      <div className="bg-primary-50 rounded-lg p-4">
+      <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4 border border-primary-100 dark:border-primary-800">
         <div className="flex items-start gap-2">
-          <HelpCircle className="h-5 w-5 text-primary-600 mt-0.5" />
+          <HelpCircle className="h-5 w-5 text-primary-600 dark:text-primary-400 mt-0.5" />
           <div>
-            <h4 className="text-sm font-medium text-primary-900">Where to get API keys</h4>
-            <ul className="mt-2 text-sm text-primary-700 space-y-1">
+            <h4 className="text-sm font-medium text-primary-900 dark:text-primary-100">Where to get API keys</h4>
+            <ul className="mt-2 text-sm text-primary-800 dark:text-primary-200 space-y-1">
               <li>• <strong>Groq:</strong> console.groq.com/keys (free)</li>
               <li>• <strong>Cerebras:</strong> cloud.cerebras.ai (free)</li>
               <li>• <strong>Google:</strong> makersuite.google.com/app/apikey (free)</li>

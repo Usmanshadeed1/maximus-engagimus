@@ -191,7 +191,7 @@ const Dropdown = forwardRef(function Dropdown(
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  className="w-full pl-9 pr-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-primary-500 bg-white dark:bg-[#3b4cca52] text-gray-900 dark:text-gray-100"
                   placeholder="Search..."
                 />
               </div>
@@ -201,7 +201,7 @@ const Dropdown = forwardRef(function Dropdown(
           {/* Options list */}
           <ul className="max-h-60 overflow-auto py-1">
             {filteredOptions.length === 0 ? (
-              <li className="px-3 py-2 text-sm text-gray-500 text-center">
+              <li className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400 text-center">
                 No options found
               </li>
             ) : (
@@ -213,7 +213,7 @@ const Dropdown = forwardRef(function Dropdown(
                     onClick={() => handleSelect(option)}
                     className={`
                       flex items-center justify-between px-3 py-2 cursor-pointer
-                      ${selected ? 'bg-primary-50 text-black' : 'text-gray-900 hover:bg-gray-100 hover:text-black'}
+                      ${selected ? 'bg-primary-100 dark:bg-primary-900 text-gray-900 dark:text-gray-100' : 'text-gray-900 dark:text-gray-100 hover:bg-primary-50 dark:hover:bg-primary-900/50 hover:text-gray-900 dark:hover:text-gray-100'}
                     `}
                   >
                     {renderOption ? (

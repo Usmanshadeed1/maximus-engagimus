@@ -242,7 +242,7 @@ Modal.Confirm = function ConfirmModal({
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white dark:bg-[var(--card-soft)] dark:text-gray-200 border border-gray-300 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-[var(--card-soft)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white dark:bg-[#3b4cca52] dark:text-gray-200 border border-gray-300 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-[#3b4cca52] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
           >
             {cancelText}
           </button>
