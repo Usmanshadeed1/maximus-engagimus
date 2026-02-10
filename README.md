@@ -225,3 +225,5 @@ Proprietary - All rights reserved.
 ---
 
 Built with 💙 and the power of Pokémon Blue (#3B4CCA)
+
+**Test Commit:** Cloned and verified setup on February 10, 2026.
