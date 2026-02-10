@@ -264,8 +264,8 @@ export function AuthProvider({ children }) {
       
       if (authError) throw authError;
 
-      // If email confirmation is disabled, create org and user profile
-      if (authData.user && !authData.user.identities?.length === 0) {
+      // If signup was successful, create org and user profile
+      if (authData.user) {
         // Create organization
         const orgSlug = organizationName
           .toLowerCase()

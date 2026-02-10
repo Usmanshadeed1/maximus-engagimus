@@ -69,6 +69,54 @@ export const DEFAULT_PROVIDERS = [
 ];
 
 /**
+ * Fetch available models from OpenRouter
+ */
+export async function fetchOpenRouterModels(apiKey) {
+  try {
+    const response = await fetch('https://openrouter.ai/api/v1/models', {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch models: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    // Filter for free models and sort by popularity/context length
+    const freeModels = data.data
+      .filter(model => model.id.includes(':free'))
+      .sort((a, b) => {
+        // Sort by context length (higher first), then by name
+        const aContext = a.context_length || 0;
+        const bContext = b.context_length || 0;
+        if (aContext !== bContext) {
+          return bContext - aContext;
+        }
+        return a.name.localeCompare(b.name);
+      })
+      .map(model => ({
+        value: model.id,
+        label: `${model.name} (${model.context_length || 'Unknown'} tokens)`,
+        description: model.description,
+      }));
+
+    return freeModels;
+  } catch (error) {
+    console.error('Error fetching OpenRouter models:', error);
+    // Return fallback models if API fails
+    return [
+      { value: 'meta-llama/llama-3.3-70b-instruct:free', label: 'Meta Llama 3.3 70B Instruct (Free)' },
+      { value: 'microsoft/wizardlm-2-8x22b:free', label: 'Microsoft WizardLM 2 8x22B (Free)' },
+      { value: 'mistralai/mistral-7b-instruct:free', label: 'Mistral 7B Instruct (Free)' },
+    ];
+  }
+}
+
+/**
  * Error types for AI calls
  */
 export class AIError extends Error {

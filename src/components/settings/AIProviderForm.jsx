@@ -7,7 +7,7 @@
 import { useState } from 'react';
 import { Eye, EyeOff, HelpCircle } from 'lucide-react';
 import { Button, Input, TextArea, Toggle, Dropdown } from '../ui';
-import { DEFAULT_PROVIDERS } from '../../lib/ai';
+import { DEFAULT_PROVIDERS, fetchOpenRouterModels } from '../../lib/ai';
 
 // Provider templates for quick setup
 const PROVIDER_TEMPLATES = DEFAULT_PROVIDERS.map(p => ({
@@ -36,6 +36,8 @@ export default function AIProviderForm({
   const [showApiKey, setShowApiKey] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [availableModels, setAvailableModels] = useState([]);
+  const [loadingModels, setLoadingModels] = useState(false);
 
   // Update field
   const updateField = (field, value) => {
@@ -57,6 +59,27 @@ export default function AIProviderForm({
         is_free: template.is_free,
         notes: template.notes,
       }));
+      
+      // Load models if OpenRouter
+      if (template.provider_name === 'OpenRouter' && formData.api_key_encrypted) {
+        loadOpenRouterModels(formData.api_key_encrypted);
+      }
+    }
+  };
+
+  // Load OpenRouter models
+  const loadOpenRouterModels = async (apiKey) => {
+    if (!apiKey || formData.provider_name !== 'OpenRouter') return;
+    
+    setLoadingModels(true);
+    try {
+      const models = await fetchOpenRouterModels(apiKey);
+      setAvailableModels(models);
+    } catch (error) {
+      console.error('Failed to load OpenRouter models:', error);
+      // Keep existing models or show error
+    } finally {
+      setLoadingModels(false);
     }
   };
 
@@ -151,7 +174,13 @@ export default function AIProviderForm({
             type={showApiKey ? 'text' : 'password'}
             placeholder={isEdit ? '••••••••••••••••' : 'Enter your API key'}
             value={formData.api_key_encrypted}
-            onChange={(e) => updateField('api_key_encrypted', e.target.value)}
+            onChange={(e) => {
+              updateField('api_key_encrypted', e.target.value);
+              // Load models if OpenRouter and key changed
+              if (formData.provider_name === 'OpenRouter') {
+                loadOpenRouterModels(e.target.value);
+              }
+            }}
             error={errors.api_key_encrypted}
             rightIcon={showApiKey ? EyeOff : Eye}
             onRightIconClick={() => setShowApiKey(!showApiKey)}
@@ -160,15 +189,34 @@ export default function AIProviderForm({
           />
         </div>
 
-        <Input
-          label="Model Name"
-          placeholder="e.g., llama-3.3-70b-versatile"
-          value={formData.model_name}
-          onChange={(e) => updateField('model_name', e.target.value)}
-          error={errors.model_name}
-          helper="The specific model to use for completions"
-          required
-        />
+        {formData.provider_name === 'OpenRouter' ? (
+          <div>
+            <Dropdown
+              label="Model Name"
+              placeholder={loadingModels ? 'Loading models...' : 'Select a model'}
+              options={availableModels}
+              value={formData.model_name}
+              onChange={(value) => updateField('model_name', value)}
+              error={errors.model_name}
+              helper="Choose from available free models"
+              required
+              disabled={loadingModels}
+            />
+            {loadingModels && (
+              <p className="mt-1 text-sm text-gray-500">Fetching available models...</p>
+            )}
+          </div>
+        ) : (
+          <Input
+            label="Model Name"
+            placeholder="e.g., llama-3.3-70b-versatile"
+            value={formData.model_name}
+            onChange={(e) => updateField('model_name', e.target.value)}
+            error={errors.model_name}
+            helper="The specific model to use for completions"
+            required
+          />
+        )}
       </div>
 
       {/* Options */}
