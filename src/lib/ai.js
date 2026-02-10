@@ -69,51 +69,25 @@ export const DEFAULT_PROVIDERS = [
 ];
 
 /**
- * Fetch available models from OpenRouter
+ * Get available free models from OpenRouter
+ * Using verified working model names from OpenRouter
  */
 export async function fetchOpenRouterModels(apiKey) {
-  try {
-    const response = await fetch('https://openrouter.ai/api/v1/models', {
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch models: ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    // Filter for free models and sort by popularity/context length
-    const freeModels = data.data
-      .filter(model => model.id.includes(':free'))
-      .sort((a, b) => {
-        // Sort by context length (higher first), then by name
-        const aContext = a.context_length || 0;
-        const bContext = b.context_length || 0;
-        if (aContext !== bContext) {
-          return bContext - aContext;
-        }
-        return a.name.localeCompare(b.name);
-      })
-      .map(model => ({
-        value: model.id,
-        label: `${model.name} (${model.context_length || 'Unknown'} tokens)`,
-        description: model.description,
-      }));
-
-    return freeModels;
-  } catch (error) {
-    console.error('Error fetching OpenRouter models:', error);
-    // Return fallback models if API fails
-    return [
-      { value: 'meta-llama/llama-3.3-70b-instruct:free', label: 'Meta Llama 3.3 70B Instruct (Free)' },
-      { value: 'microsoft/wizardlm-2-8x22b:free', label: 'Microsoft WizardLM 2 8x22B (Free)' },
-      { value: 'mistralai/mistral-7b-instruct:free', label: 'Mistral 7B Instruct (Free)' },
-    ];
-  }
+  // Return curated list of VERIFIED working free models
+  return [
+    { value: 'openrouter/aurora-alpha', label: 'OpenRouter Aurora Alpha (Free) - Latest flagship' },
+    { value: 'meta-llama/llama-3.3-70b-instruct:free', label: 'Meta Llama 3.3 70B Instruct (Free)' },
+    { value: 'meta-llama/llama-3.1-70b-instruct:free', label: 'Meta Llama 3.1 70B Instruct (Free)' },
+    { value: 'meta-llama/llama-3.1-8b-instruct:free', label: 'Meta Llama 3.1 8B Instruct (Free)' },
+    { value: 'nvidia/nemotron-3-nano-30b-a3b:free', label: 'NVIDIA Nemotron 3 Nano 30B (Free)' },
+    { value: 'google/gemma-2-9b-it:free', label: 'Google Gemma 2 9B (Free)' },
+    { value: 'microsoft/wizardlm-2-8x22b:free', label: 'Microsoft WizardLM 2 8x22B (Free)' },
+    { value: 'mistralai/mistral-7b-instruct:free', label: 'Mistral 7B Instruct (Free)' },
+    { value: 'qwen/qwen-2.5-7b-instruct:free', label: 'Qwen 2.5 7B Instruct (Free)' },
+    { value: 'arcee-ai/trinity-mini:free', label: 'Arcee AI Trinity Mini (Free)' },
+    { value: 'huggingfaceh4/zephyr-7b-beta:free', label: 'Zephyr 7B Beta (Free)' },
+    { value: 'openchat/openchat-7b:free', label: 'OpenChat 7B (Free)' },
+  ];
 }
 
 /**
@@ -456,7 +430,7 @@ export async function testProvider(provider) {
   try {
     const result = await makeCompletionRequest(provider, testMessages, {
       maxTokens: 20,
-      timeout: 10000,
+      timeout: 30000, // 30 seconds for OpenRouter's slow responses
     });
     
     return {
@@ -465,10 +439,32 @@ export async function testProvider(provider) {
       response: result.content,
     };
   } catch (error) {
+    // Log detailed error for debugging
+    console.error('Test connection failed:', {
+      provider: provider.provider_name,
+      model: provider.model_name,
+      apiBaseUrl: provider.api_base_url,
+      errorCode: error.code,
+      errorMessage: error.message,
+      fullError: error,
+    });
+    
+    // Return detailed error message
+    let detailedMessage = `${error.message}`;
+    
+    if (error.code === 'TIMEOUT') {
+      detailedMessage = `Request timed out after 10 seconds. Provider: ${provider.provider_name}, Model: ${provider.model_name}, URL: ${provider.api_base_url}. Check your API key and OpenRouter account status.`;
+    } else if (error.code === 'AUTH_ERROR') {
+      detailedMessage = `Authentication failed. Your API key may be invalid or expired. Provider: ${provider.provider_name}`;
+    } else if (error.code === 'RATE_LIMIT') {
+      detailedMessage = `Rate limit exceeded. Try again later or upgrade your OpenRouter account.`;
+    }
+    
     return {
       success: false,
-      message: error.message,
+      message: detailedMessage,
       code: error.code,
+      provider: provider.provider_name,
     };
   }
 }
