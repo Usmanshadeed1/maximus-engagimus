@@ -22,6 +22,45 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Ensure user has an organization
+  const ensureOrganization = async (currentProfile, sessionUser) => {
+    if (currentProfile?.organization) return currentProfile; // Already has org
+    if (!currentProfile) return null;
+    
+    try {
+      // Create organization
+      const orgName = `${currentProfile.full_name || sessionUser?.email || 'User'}'s Organization`;
+      const orgSlug = orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      
+      const { data: org, error: orgError } = await supabase
+        .from('organizations')
+        .insert({
+          name: orgName,
+          slug: `${orgSlug}-${Date.now()}`,
+        })
+        .select()
+        .single();
+      
+      if (orgError) throw orgError;
+      
+      // Update user with organization_id
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ organization_id: org.id })
+        .eq('id', currentProfile.id);
+      
+      if (updateError) throw updateError;
+      
+      // Update profile object
+      currentProfile.organization_id = org.id;
+      currentProfile.organization = org;
+      return currentProfile;
+    } catch (err) {
+      console.error('Error ensuring organization:', err);
+      return currentProfile; // Return profile even if org creation fails
+    }
+  };
+
   // Track last session check time to avoid over-checking
   const lastSessionCheckRef = useCallback(() => {
     const key = 'lastSessionCheck';
@@ -114,12 +153,15 @@ export function AuthProvider({ children }) {
               }
 
               // Fetch fresh profile with timeout
-              const profileData = await Promise.race([
+              let profileData = await Promise.race([
                 getUserProfile(),
                 new Promise((_, reject) => 
                   setTimeout(() => reject(new Error('Profile fetch timeout')), 2000)
                 ),
               ]);
+              
+              // Ensure organization is set up
+              profileData = await ensureOrganization(profileData, session.user);
               
               if (mounted && profileData) {
                 // Cache for 10 minutes
@@ -129,17 +171,66 @@ export function AuthProvider({ children }) {
                 setOrganization(profileData?.organization || null);
               }
             } catch (profileErr) {
-              console.error('Error fetching profile:', profileErr);
-              if (mounted) {
-                // Fall back to cached profile if fetch fails
-                const cached = getCached('userProfile');
-                if (!cached) {
-                  // No cache available, set user without profile
+              if (profileErr?.code === 'PGRST116' || profileErr?.message?.includes('No rows')) {
+                // Insert user profile
+                const { error: insertError } = await supabase
+                  .from('users')
+                  .insert({
+                    id: session.user.id,
+                    organization_id: null,
+                    email: session.user.email,
+                    full_name: session.user.user_metadata?.full_name || '',
+                    role: 'owner',
+                  });
+                if (insertError) throw insertError;
+
+                // Wait a bit for the insert to replicate
+                await new Promise(r => setTimeout(r, 500));
+
+                // Fetch profile
+                let profileData = null;
+                try {
+                  profileData = await Promise.race([
+                    getUserProfile(),
+                    new Promise((_, reject) => 
+                      setTimeout(() => reject(new Error('Profile fetch timeout')), 2000)
+                    ),
+                  ]);
+                } catch (fetchErr) {
+                  // If fetch still fails, use the data we inserted
+                  profileData = {
+                    id: session.user.id,
+                    email: session.user.email,
+                    full_name: session.user.user_metadata?.full_name || '',
+                    role: 'owner',
+                    organization_id: null,
+                    organization: null,
+                  };
+                }
+
+                // Ensure organization is set up
+                profileData = await ensureOrganization(profileData, session.user);
+
+                if (mounted && profileData) {
+                  // Cache for 10 minutes
+                  setCached('userProfile', profileData, 10 * 60 * 1000);
                   setUser(session.user);
-                } else {
-                  setUser(session.user);
-                  setProfile(cached);
-                  setOrganization(cached?.organization || null);
+                  setProfile(profileData);
+                  setOrganization(profileData?.organization || null);
+                }
+              } else {
+                console.error('Error fetching profile:', profileErr);
+                if (mounted) {
+                  // Fall back to cached profile if fetch fails
+                  const cached = getCached('userProfile');
+                  if (!cached) {
+                    // No cache available, set user without profile
+                    setUser(session.user);
+                  } else {
+                    setUser(session.user);
+                    setProfile(cached);
+                    setOrganization(cached?.organization || null);
+                  }
                 }
               }
             }
@@ -263,39 +354,6 @@ export function AuthProvider({ children }) {
       });
       
       if (authError) throw authError;
-
-      // If signup was successful, create org and user profile
-      if (authData.user) {
-        // Create organization
-        const orgSlug = organizationName
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/(^-|-$)/g, '');
-
-        const { data: orgData, error: orgError } = await supabase
-          .from('organizations')
-          .insert({
-            name: organizationName,
-            slug: `${orgSlug}-${Date.now()}`,
-          })
-          .select()
-          .single();
-
-        if (orgError) throw orgError;
-
-        // Create user profile
-        const { error: profileError } = await supabase
-          .from('users')
-          .insert({
-            id: authData.user.id,
-            organization_id: orgData.id,
-            email: email,
-            full_name: fullName,
-            role: 'owner',
-          });
-
-        if (profileError) throw profileError;
-      }
 
       return { data: authData, error: null };
     } catch (err) {

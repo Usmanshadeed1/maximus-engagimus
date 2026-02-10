@@ -623,7 +623,51 @@ export async function getDefaultAIProvider() {
  * Create an AI provider
  */
 export async function createAIProvider(providerData) {
-  const profile = await getUserProfile();
+  let profile = await getUserProfile();
+  
+  // If organization_id is missing, create the organization
+  if (!profile.organization_id) {
+    console.log('[AI Provider] Organization missing, creating one...');
+    
+    try {
+      const orgName = `${profile.full_name || 'User'}'s Organization`;
+      const orgSlug = orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      
+      const { data: org, error: orgError } = await supabase
+        .from('organizations')
+        .insert({
+          name: orgName,
+          slug: `${orgSlug}-${Date.now()}`,
+        })
+        .select()
+        .single();
+      
+      if (orgError) throw orgError;
+      
+      console.log('[AI Provider] Organization created:', org.id);
+      
+      // Update user with the new organization
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ organization_id: org.id })
+        .eq('id', profile.id);
+      
+      if (updateError) throw updateError;
+      
+      console.log('[AI Provider] User updated with organization');
+      
+      // Update the profile object
+      profile.organization_id = org.id;
+      profile.organization = org;
+    } catch (err) {
+      console.error('[AI Provider] Failed to create organization:', err);
+      throw new Error(`Failed to set up organization: ${err.message}`);
+    }
+  }
+  
+  if (!profile.organization_id) {
+    throw new Error('Organization ID is still not set. Please refresh and try again.');
+  }
   
   const { data, error } = await supabase
     .from('ai_providers')

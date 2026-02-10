@@ -124,6 +124,8 @@ export default function AIProviderForm({
         delete submitData.api_key_encrypted;
       }
       await onSubmit(submitData);
+    } catch (error) {
+      setErrors({ submit: error.message });
     } finally {
       setLoading(false);
     }
@@ -285,6 +287,7 @@ export default function AIProviderForm({
 
       {/* Form Actions */}
       <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+        {errors.submit && <p className="text-red-500 text-sm mr-4">{errors.submit}</p>}
         <Button type="button" variant="secondary" onClick={onCancel}>
           Cancel
         </Button>

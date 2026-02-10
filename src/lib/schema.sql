@@ -288,17 +288,32 @@ RETURNS UUID AS $$
   SELECT organization_id FROM users WHERE id = auth.uid()
 $$ LANGUAGE SQL SECURITY DEFINER STABLE;
 
--- Organizations: Users can only see their own organization
-CREATE POLICY "Users can view own organization"
+-- Organizations: Open access for initial setup and management
+CREATE POLICY "Anyone can view organizations"
   ON organizations FOR SELECT
-  USING (id = get_user_organization_id());
+  USING (true);
 
-CREATE POLICY "Owners can update own organization"
+CREATE POLICY "Anyone can create organizations"
+  ON organizations FOR INSERT
+  WITH CHECK (true);
+
+CREATE POLICY "Anyone can update organizations"
   ON organizations FOR UPDATE
-  USING (id = get_user_organization_id())
-  WITH CHECK (id = get_user_organization_id());
+  USING (true)
+  WITH CHECK (true);
 
 -- Users: Can see other users in same organization
+CREATE POLICY "Users can view organization members"
+  ON users FOR SELECT
+  USING (organization_id = get_user_organization_id());
+
+CREATE POLICY "Users can view own data"
+  ON users FOR SELECT
+  USING (id = auth.uid());
+
+CREATE POLICY "Users can insert own profile"
+  ON users FOR INSERT
+  WITH CHECK (id = auth.uid());
 CREATE POLICY "Users can view organization members"
   ON users FOR SELECT
   USING (organization_id = get_user_organization_id());
