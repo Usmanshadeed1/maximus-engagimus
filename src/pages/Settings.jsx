@@ -373,7 +373,7 @@ function PlatformPromptsTab() {
         size="lg"
         footer={
           <>
-            <Button variant="ghost" onClick={resetToDefault}>
+            <Button variant="secondary" onClick={resetToDefault}>
               Reset to Default
             </Button>
             <div className="flex-1" />

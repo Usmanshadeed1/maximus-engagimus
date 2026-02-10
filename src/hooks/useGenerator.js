@@ -98,8 +98,9 @@ export function useGenerator() {
         maxTokens: 1500,
       });
 
-      // Parse the response
-      const parsedOptions = parseCommentOptions(result.content);
+      // Parse the response with max length enforcement
+      const maxLength = platformPrompt?.max_length || null;
+      const parsedOptions = parseCommentOptions(result.content, maxLength);
 
       if (parsedOptions.length === 0) {
         throw new Error('Failed to parse comment options from AI response');
@@ -221,26 +222,41 @@ export function useGenerator() {
       return null;
     }
 
-    const prompt = generateClipboardPrompt({
-      client,
-      platform,
-      content,
-      existingComments,
-      posterInfo,
-      hashtags,
-      numOptions,
-      includeCta,
-    });
+    try {
+      // Get platform-specific prompt (custom or default) - same as generate()
+      let platformPrompt;
+      try {
+        platformPrompt = await getPlatformPrompt(platform);
+      } catch {
+        platformPrompt = getPlatformPromptDefaults(platform);
+      }
 
-    const success = await copyToClipboard(prompt);
-    if (success) {
-      // Short instructional message including keyboard paste hints for Windows/Mac
-      toast.success('Prompt copied — paste into chat (Ctrl/⌘+V)');
-    } else {
-      toast.error('Failed to copy prompt');
+      const prompt = generateClipboardPrompt({
+        client,
+        platform,
+        platformPrompt,
+        content,
+        existingComments,
+        posterInfo,
+        hashtags,
+        numOptions,
+        includeCta,
+      });
+
+      const success = await copyToClipboard(prompt);
+      if (success) {
+        // Short instructional message including keyboard paste hints for Windows/Mac
+        toast.success('Prompt copied — paste into chat (Ctrl/⌘+V)');
+      } else {
+        toast.error('Failed to copy prompt');
+      }
+
+      return prompt;
+    } catch (err) {
+      console.error('Error generating prompt for clipboard:', err);
+      toast.error('Failed to generate prompt');
+      return null;
     }
-
-    return prompt;
   }, []);
 
   /**

@@ -341,7 +341,7 @@ export async function generateCompletion(messages, options = {}) {
 /**
  * Parse AI response to extract comment options
  */
-export function parseCommentOptions(content) {
+export function parseCommentOptions(content, maxLength = null) {
   const options = [];
   
   // Try to parse as JSON first
@@ -350,12 +350,18 @@ export function parseCommentOptions(content) {
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0]);
       if (Array.isArray(parsed)) {
-        return parsed.map((item, index) => ({
-          index,
-          style: item.style || 'conversational',
-          text: item.text || item.comment || item.content || '',
-          charCount: (item.text || item.comment || item.content || '').length,
-        }));
+        return parsed.map((item, index) => {
+          const text = item.text || item.comment || item.content || '';
+          const truncatedText = maxLength && text.length > maxLength 
+            ? text.slice(0, maxLength).trim() 
+            : text;
+          return {
+            index,
+            style: item.style || 'conversational',
+            text: truncatedText,
+            charCount: truncatedText.length,
+          };
+        });
       }
     }
   } catch {
@@ -366,11 +372,15 @@ export function parseCommentOptions(content) {
   const numberedPattern = /(\d+)\.\s*\[?(\w+(?:-\w+)?)\]?[:\s]+(.+?)(?=\n\d+\.|$)/gs;
   let match;
   while ((match = numberedPattern.exec(content)) !== null) {
+    const text = match[3].trim();
+    const truncatedText = maxLength && text.length > maxLength 
+      ? text.slice(0, maxLength).trim() 
+      : text;
     options.push({
       index: options.length,
       style: match[2].toLowerCase().replace(/\s+/g, '-'),
-      text: match[3].trim(),
-      charCount: match[3].trim().length,
+      text: truncatedText,
+      charCount: truncatedText.length,
     });
   }
 
@@ -381,18 +391,26 @@ export function parseCommentOptions(content) {
       // Try to extract style from the beginning
       const styleMatch = part.match(/^\[?(\w+(?:-\w+)?)\]?[:\s]+(.+)/s);
       if (styleMatch) {
+        const text = styleMatch[2].trim();
+        const truncatedText = maxLength && text.length > maxLength 
+          ? text.slice(0, maxLength).trim() 
+          : text;
         options.push({
           index,
           style: styleMatch[1].toLowerCase().replace(/\s+/g, '-'),
-          text: styleMatch[2].trim(),
-          charCount: styleMatch[2].trim().length,
+          text: truncatedText,
+          charCount: truncatedText.length,
         });
       } else {
+        const text = part.trim();
+        const truncatedText = maxLength && text.length > maxLength 
+          ? text.slice(0, maxLength).trim() 
+          : text;
         options.push({
           index,
           style: 'conversational',
-          text: part.trim(),
-          charCount: part.trim().length,
+          text: truncatedText,
+          charCount: truncatedText.length,
         });
       }
     });

@@ -304,6 +304,7 @@ export function generateClipboardPrompt(options) {
   const {
     client,
     platform,
+    platformPrompt,
     content,
     existingComments,
     posterInfo,
@@ -312,12 +313,13 @@ export function generateClipboardPrompt(options) {
     includeCta = false,
   } = options;
 
-  const platformDefaults = getPlatformPromptDefaults(platform);
+  // Use provided platformPrompt or fall back to defaults
+  const effectivePlatformPrompt = platformPrompt || getPlatformPromptDefaults(platform);
   
   const systemPrompt = buildSystemPrompt({
     client,
     platform,
-    platformPrompt: platformDefaults,
+    platformPrompt: effectivePlatformPrompt,
     includeCta,
   });
 
