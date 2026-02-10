@@ -70,7 +70,7 @@ export default function CommentOption({
       `}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-100">
+      <div className="flex items-center justify-between px-4 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
         <div className="flex items-center gap-2">
           <Badge variant={styleColor} size="sm">
             <StyleIcon className="h-3 w-3 mr-1" />
@@ -83,20 +83,20 @@ export default function CommentOption({
             </Badge>
           )}
         </div>
-        <span className="text-xs text-gray-500">
+        <span className="text-xs text-gray-500 dark:text-gray-400">
           {option.charCount || option.text?.length || 0} chars
         </span>
       </div>
 
       {/* Content */}
       <div className="p-4">
-        <p className="text-gray-800 whitespace-pre-wrap leading-relaxed">
+        <p className="text-gray-800 dark:text-gray-100 whitespace-pre-wrap leading-relaxed">
           {option.text}
         </p>
       </div>
 
       {/* Actions */}
-      <div className="flex items-center justify-end gap-2 px-4 py-3 bg-gray-50 border-t border-gray-100">
+      <div className="flex items-center justify-end gap-2 px-4 py-3 bg-gray-50 dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
         <Button
           variant="ghost"
           size="sm"

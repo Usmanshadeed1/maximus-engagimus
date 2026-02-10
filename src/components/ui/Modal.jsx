@@ -169,12 +169,12 @@ export default function Modal({
         >
           {/* Header */}
           {(title || showClose) && (
-            <div className="flex items-start justify-between p-4 sm:p-6 border-b border-gray-200">
+            <div className="flex items-start justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
               <div>
                 {title && (
                   <h2
                     id="modal-title"
-                    className="text-lg font-semibold text-gray-900"
+                    className="text-lg font-semibold text-gray-900 dark:text-gray-100"
                   >
                     {title}
                   </h2>
@@ -187,7 +187,7 @@ export default function Modal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="ml-4 p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
+                  className="ml-4 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
                   aria-label="Close modal"
                 >
                   <X className="h-5 w-5" />

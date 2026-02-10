@@ -244,7 +244,7 @@ export default function ClientDetail() {
               <Card.Title>Voice Prompt</Card.Title>
               <Card.Description>The base personality and style guide</Card.Description>
             </Card.Header>
-            <div className="bg-gray-50 rounded-md p-3 text-sm text-gray-700 whitespace-pre-wrap">
+            <div className="bg-gray-50 dark:bg-[var(--bg)] rounded-md p-3 text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
               {client.voice_prompt || 'No voice prompt set.'}
             </div>
           </Card>

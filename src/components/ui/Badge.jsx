@@ -8,14 +8,14 @@ import { forwardRef } from 'react';
 
 // Badge variants
 const variants = {
-  primary: 'bg-primary-100 text-primary-800',
-  secondary: 'bg-gray-100 text-gray-800',
-  success: 'bg-success-100 text-success-800',
-  warning: 'bg-warning-100 text-warning-800',
-  error: 'bg-error-100 text-error-800',
-  info: 'bg-blue-100 text-blue-800',
-  outline: 'bg-transparent border border-gray-300 text-gray-700',
-  'outline-primary': 'bg-transparent border border-primary-300 text-primary-700',
+  primary: 'bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200',
+  secondary: 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200',
+  success: 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-200',
+  warning: 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-200',
+  error: 'bg-error-100 dark:bg-error-900/30 text-error-800 dark:text-error-200',
+  info: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200',
+  outline: 'bg-transparent border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300',
+  'outline-primary': 'bg-transparent border border-primary-300 dark:border-primary-600 text-primary-700 dark:text-primary-300',
 };
 
 // Badge sizes

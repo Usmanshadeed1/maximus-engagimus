@@ -10,9 +10,9 @@ import { Loader2 } from 'lucide-react';
 // Button variants
 const variants = {
   primary: 'bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500',
-  secondary: 'bg-white dark:bg-[var(--card)] text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[var(--card-soft)] focus:ring-primary-500',
+  secondary: 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-100 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white focus:ring-primary-500',
   danger: 'bg-error-500 text-white hover:bg-error-600 focus:ring-error-500',
-  ghost: 'bg-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:ring-primary-500',
+  ghost: 'bg-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 focus:ring-primary-500',
   link: 'bg-transparent text-primary-500 hover:text-primary-600 hover:underline p-0 focus:ring-0',
 };
 

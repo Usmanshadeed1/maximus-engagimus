@@ -181,9 +181,9 @@ export default function ClientForm({
       </div>
 
       {/* Tips Section */}
-      <div className="bg-primary-50 rounded-lg p-4 text-sm">
-        <h4 className="font-medium text-primary-900 mb-2">Tips for Great Voice Prompts</h4>
-        <ul className="text-primary-700 space-y-1 list-disc list-inside">
+      <div className="bg-primary-50 dark:bg-primary-900/10 rounded-lg p-4 text-sm">
+        <h4 className="font-medium text-primary-900 dark:text-primary-200 mb-2">Tips for Great Voice Prompts</h4>
+        <ul className="text-primary-700 dark:text-primary-300 space-y-1 list-disc list-inside">
           <li>Be specific about tone (casual, professional, witty, etc.)</li>
           <li>Include what to avoid (jargon, hard sells, etc.)</li>
           <li>Reference the type of expertise to convey</li>

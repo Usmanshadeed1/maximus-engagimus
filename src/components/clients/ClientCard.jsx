@@ -52,11 +52,11 @@ export default function ClientCard({
             <div className="min-w-0 flex-1">
               <Link
                 to={`/clients/${client.id}`}
-                className="font-medium text-gray-900 hover:text-primary-600 truncate block"
+                className="font-medium text-gray-900 dark:text-gray-100 hover:text-primary-600 truncate block"
               >
                 {client.name}
               </Link>
-              <p className="text-sm text-gray-500 truncate">{client.industry}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{client.industry}</p>
             </div>
 
             {/* Stats */}
@@ -91,15 +91,15 @@ export default function ClientCard({
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+                className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
               >
                 <MoreVertical className="h-5 w-5" />
               </button>
               {menuOpen && (
-                <div className="absolute right-0 mt-1 w-36 bg-white dark:bg-[var(--card)] rounded-md shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10">
+                <div className="absolute right-0 mt-1 w-36 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10">
                   <Link
                     to={`/clients/${client.id}`}
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black hover:text-black"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
                   >
                     <Edit className="h-4 w-4" />
                     Edit
@@ -109,7 +109,7 @@ export default function ClientCard({
                       setMenuOpen(false);
                       onDelete();
                     }}
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-error-600 hover:bg-error-50 hover:text-black hover:text-black w-full"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20 hover:text-error-700 dark:hover:text-error-300 w-full"
                   >
                     <Trash2 className="h-4 w-4" />
                     Delete
@@ -127,26 +127,26 @@ export default function ClientCard({
   return (
     <div className="bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all dark:bg-[var(--card-soft)] dark:border-gray-700">
       {/* Header */}
-      <div className="p-4 border-b border-gray-100">
+      <div className="p-4 border-b border-gray-100 dark:border-gray-700">
         <div className="flex items-start justify-between">
           <Link to={`/clients/${client.id}`} className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-900 hover:text-primary-600 truncate">
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 hover:text-primary-600 truncate">
               {client.name}
             </h3>
-            <p className="text-sm text-gray-500 mt-0.5">{client.industry}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{client.industry}</p>
           </Link>
           <div className="relative ml-2" ref={menuRef}>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+              className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
             >
               <MoreVertical className="h-5 w-5" />
             </button>
             {menuOpen && (
-              <div className="absolute right-0 mt-1 w-36 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-10">
+              <div className="absolute right-0 mt-1 w-36 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10">
                 <Link
                   to={`/clients/${client.id}`}
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
                 >
                   <Edit className="h-4 w-4" />
                   Edit
@@ -169,15 +169,15 @@ export default function ClientCard({
 
       {/* Description */}
       <div className="px-4 py-3">
-        <p className="text-sm text-gray-600 line-clamp-2">
+        <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
           {client.description || 'No description provided.'}
         </p>
       </div>
 
       {/* Stats */}
-      <div className="px-4 py-3 border-t border-gray-100 bg-gray-50 rounded-b-lg dark:bg-[var(--card-soft)] dark:border-gray-700">
+      <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-b-lg">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 text-xs text-gray-500">
+          <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
             <span className="flex items-center gap-1" title="Keywords">
               <Tag className="h-3.5 w-3.5" />
               {keywordCount}
@@ -192,7 +192,7 @@ export default function ClientCard({
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-gray-500 dark:text-gray-400">
               {client.is_active ? 'Active' : 'Inactive'}
             </span>
             <Toggle
