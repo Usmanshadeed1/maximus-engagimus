@@ -73,20 +73,14 @@ export const DEFAULT_PROVIDERS = [
  * Using verified working model names from OpenRouter
  */
 export async function fetchOpenRouterModels(apiKey) {
-  // Return curated list of VERIFIED working free models
+  // Return curated list of VERIFIED working models
   return [
-    { value: 'openrouter/aurora-alpha', label: 'OpenRouter Aurora Alpha (Free) - Latest flagship' },
-    { value: 'meta-llama/llama-3.3-70b-instruct:free', label: 'Meta Llama 3.3 70B Instruct (Free)' },
-    { value: 'meta-llama/llama-3.1-70b-instruct:free', label: 'Meta Llama 3.1 70B Instruct (Free)' },
-    { value: 'meta-llama/llama-3.1-8b-instruct:free', label: 'Meta Llama 3.1 8B Instruct (Free)' },
-    { value: 'nvidia/nemotron-3-nano-30b-a3b:free', label: 'NVIDIA Nemotron 3 Nano 30B (Free)' },
-    { value: 'google/gemma-2-9b-it:free', label: 'Google Gemma 2 9B (Free)' },
-    { value: 'microsoft/wizardlm-2-8x22b:free', label: 'Microsoft WizardLM 2 8x22B (Free)' },
-    { value: 'mistralai/mistral-7b-instruct:free', label: 'Mistral 7B Instruct (Free)' },
-    { value: 'qwen/qwen-2.5-7b-instruct:free', label: 'Qwen 2.5 7B Instruct (Free)' },
+    { value: 'arcee-ai/trinity-large-preview:free', label: 'Arcee AI Trinity Large Preview (Free)' },
     { value: 'arcee-ai/trinity-mini:free', label: 'Arcee AI Trinity Mini (Free)' },
-    { value: 'huggingfaceh4/zephyr-7b-beta:free', label: 'Zephyr 7B Beta (Free)' },
-    { value: 'openchat/openchat-7b:free', label: 'OpenChat 7B (Free)' },
+    { value: 'nvidia/nemotron-3-nano-30b-a3b:free', label: 'NVIDIA Nemotron 3 Nano 30B (Free)' },
+    { value: 'openrouter/pony-alpha', label: 'OpenRouter Pony Alpha' },
+    { value: 'openrouter/aurora-alpha', label: 'OpenRouter Aurora Alpha' },
+    { value: 'deepseek/deepseek-r1-0528:free', label: 'DeepSeek R1 0528 (Free)' },
   ];
 }
 
