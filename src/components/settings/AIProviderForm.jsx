@@ -7,7 +7,7 @@
 import { useState } from 'react';
 import { Eye, EyeOff, HelpCircle } from 'lucide-react';
 import { Button, Input, TextArea, Toggle, Dropdown } from '../ui';
-import { DEFAULT_PROVIDERS, fetchOpenRouterModels } from '../../lib/ai';
+import { DEFAULT_PROVIDERS, fetchOpenRouterModels, fetchGroqModels } from '../../lib/ai';
 
 // Provider templates for quick setup
 const PROVIDER_TEMPLATES = DEFAULT_PROVIDERS.map(p => ({
@@ -64,6 +64,10 @@ export default function AIProviderForm({
       if (template.provider_name === 'OpenRouter' && formData.api_key_encrypted) {
         loadOpenRouterModels(formData.api_key_encrypted);
       }
+      // Load models if Groq
+      if (template.provider_name === 'Groq') {
+        loadGroqModels();
+      }
     }
   };
 
@@ -77,6 +81,22 @@ export default function AIProviderForm({
       setAvailableModels(models);
     } catch (error) {
       console.error('Failed to load OpenRouter models:', error);
+      // Keep existing models or show error
+    } finally {
+      setLoadingModels(false);
+    }
+  };
+
+  // Load Groq models
+  const loadGroqModels = async () => {
+    if (formData.provider_name !== 'Groq') return;
+    
+    setLoadingModels(true);
+    try {
+      const models = await fetchGroqModels();
+      setAvailableModels(models);
+    } catch (error) {
+      console.error('Failed to load Groq models:', error);
       // Keep existing models or show error
     } finally {
       setLoadingModels(false);
@@ -182,6 +202,10 @@ export default function AIProviderForm({
               if (formData.provider_name === 'OpenRouter') {
                 loadOpenRouterModels(e.target.value);
               }
+              // Load models if Groq
+              if (formData.provider_name === 'Groq') {
+                loadGroqModels();
+              }
             }}
             error={errors.api_key_encrypted}
             rightIcon={showApiKey ? EyeOff : Eye}
@@ -191,7 +215,7 @@ export default function AIProviderForm({
           />
         </div>
 
-        {formData.provider_name === 'OpenRouter' ? (
+        {(formData.provider_name === 'OpenRouter' || formData.provider_name === 'Groq') ? (
           <div>
             <Dropdown
               label="Model Name"
@@ -200,7 +224,7 @@ export default function AIProviderForm({
               value={formData.model_name}
               onChange={(value) => updateField('model_name', value)}
               error={errors.model_name}
-              helper="Choose from available free models"
+              helper="Choose from available models"
               required
               disabled={loadingModels}
             />

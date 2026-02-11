@@ -85,6 +85,18 @@ export async function fetchOpenRouterModels(apiKey) {
 }
 
 /**
+ * Get available free models from Groq
+ * Using top free models from Groq
+ */
+export async function fetchGroqModels(apiKey) {
+  // Return curated list of top FREE models from Groq
+  return [
+    { value: 'llama-3.3-70b-versatile', label: 'Meta Llama 3.3 70B Versatile (Fastest)' },
+    { value: 'llama-3.1-8b-instant', label: 'Meta Llama 3.1 8B Instant (Smaller & Fast)' },
+  ];
+}
+
+/**
  * Error types for AI calls
  */
 export class AIError extends Error {
