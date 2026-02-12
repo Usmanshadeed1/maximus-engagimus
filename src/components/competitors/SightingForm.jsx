@@ -180,14 +180,14 @@ export default function SightingForm({
         {/* Predefined notes */}
         {noteOptions.length > 0 && (
           <div className="mt-2">
-            <p className="text-xs text-gray-500 mb-1">Quick add:</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Quick add:</p>
             <div className="flex flex-wrap gap-1">
               {noteOptions.slice(0, 6).map((note, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => addPredefinedNote(note.value)}
-                  className="px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition-colors"
+                  className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded transition-colors"
                 >
                   {note.label}
                 </button>

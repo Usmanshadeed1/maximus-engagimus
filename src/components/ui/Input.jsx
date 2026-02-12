@@ -65,9 +65,9 @@ const Input = forwardRef(function Input(
           ref={ref}
           className={`
             block border rounded-md shadow-sm
-            placeholder-gray-400
+            placeholder-gray-400 dark:placeholder-gray-500
             focus:outline-none focus:ring-2 focus:ring-offset-0
-            disabled:bg-gray-100 disabled:cursor-not-allowed
+            disabled:bg-gray-100 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500
             transition-colors duration-200
             dark:bg-[var(--card-soft)] dark:border-gray-700 dark:text-gray-200
             shadow-sm
@@ -76,8 +76,8 @@ const Input = forwardRef(function Input(
             ${LeftIcon ? 'pl-10' : ''}
             ${RightIcon ? 'pr-10' : ''}
             ${hasError
-              ? 'border-error-300 text-error-900 focus:ring-error-500 focus:border-error-500'
-              : 'border-gray-300 focus:ring-primary-500 focus:border-primary-500'
+              ? 'border-error-300 text-error-900 focus:ring-error-500 focus:border-error-500 dark:text-error-200'
+              : 'border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400 dark:focus:border-primary-400'
             }
             ${className}
           `}

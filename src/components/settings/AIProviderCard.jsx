@@ -49,8 +49,8 @@ export default function AIProviderCard({
   return (
     <div
       className={`
-        bg-white rounded-lg border p-4
-        ${provider.is_default ? 'border-primary-300 ring-1 ring-primary-100' : 'border-gray-200'}
+        bg-white dark:bg-[var(--card)] rounded-lg border p-4 shadow-sm
+        ${provider.is_default ? 'border-primary-300 ring-1 ring-primary-100 dark:ring-primary-500/20' : 'border-gray-200 dark:border-gray-700'}
         ${!provider.is_active ? 'opacity-60' : ''}
       `}
     >
@@ -58,7 +58,7 @@ export default function AIProviderCard({
         {/* Left side: Provider info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-gray-900">{provider.provider_name}</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white">{provider.provider_name}</h3>
             {provider.is_default && (
               <Badge variant="primary" size="xs">
                 <Star className="h-3 w-3 mr-1" />
@@ -73,16 +73,16 @@ export default function AIProviderCard({
             )}
           </div>
 
-          <p className="text-sm text-gray-500 mt-1 truncate">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">
             {provider.model_name}
           </p>
 
-          <p className="text-xs text-gray-400 mt-1 truncate">
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 truncate">
             {provider.api_base_url}
           </p>
 
           {provider.notes && (
-            <p className="text-xs text-gray-500 mt-2 line-clamp-2">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2">
               {provider.notes}
             </p>
           )}
@@ -113,7 +113,7 @@ export default function AIProviderCard({
             disabled={testing || !hasApiKey}
             className={`
               p-2 rounded-md transition-colors
-              ${testing ? 'text-gray-400' : 'text-gray-500 hover:text-primary-600 hover:bg-primary-50'}
+              ${testing ? 'text-gray-400 dark:text-gray-500' : 'text-gray-500 dark:text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20'}
               disabled:opacity-50 disabled:cursor-not-allowed
             `}
             title={hasApiKey ? 'Test connection' : 'Add API key to test'}
@@ -136,7 +136,7 @@ export default function AIProviderCard({
           <div className="relative">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+              className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
             >
               <MoreVertical className="h-5 w-5" />
             </button>
@@ -155,7 +155,7 @@ export default function AIProviderCard({
                       setMenuOpen(false);
                       onEdit();
                     }}
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 w-full"
                   >
                     <Edit className="h-4 w-4" />
                     Edit
@@ -167,7 +167,7 @@ export default function AIProviderCard({
                         setMenuOpen(false);
                         onSetDefault();
                       }}
-                      className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full"
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 w-full"
                     >
                       <Star className="h-4 w-4" />
                       Set as Default
@@ -181,7 +181,7 @@ export default function AIProviderCard({
                       setMenuOpen(false);
                       onDelete();
                     }}
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-error-600 hover:bg-error-50 w-full"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-error-600 hover:bg-error-50 dark:hover:bg-error-900/20 w-full"
                   >
                     <Trash2 className="h-4 w-4" />
                     Remove
@@ -195,8 +195,8 @@ export default function AIProviderCard({
 
       {/* Fallback order indicator */}
       {!provider.is_default && provider.is_active && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
-          <div className="flex items-center gap-2 text-xs text-gray-500">
+        <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+          <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
             <Zap className="h-3 w-3" />
             Fallback order: {provider.fallback_order}
           </div>
