@@ -111,9 +111,6 @@ export default function Modal({
       // Store currently focused element
       previousActiveElement.current = document.activeElement;
 
-      // Focus the modal container for screen readers
-      modalRef.current?.focus();
-
       // Add keydown listener for escape and tab trapping
       document.addEventListener('keydown', handleKeyDown);
 

@@ -4,7 +4,7 @@
  * View and edit a single client's profile, keywords, sample comments, and more.
  */
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -61,11 +61,71 @@ export default function ClientDetail() {
   const [showKeywordModal, setShowKeywordModal] = useState(false);
   const [showSampleModal, setShowSampleModal] = useState(false);
   const [showSiteModal, setShowSiteModal] = useState(false);
+  const [showDescriptionModal, setShowDescriptionModal] = useState(false);
+  const [showVoicePromptModal, setShowVoicePromptModal] = useState(false);
+  const [showCtaModal, setShowCtaModal] = useState(false);
+  const [showAudienceModal, setShowAudienceModal] = useState(false);
 
   // Form states
   const [newKeywords, setNewKeywords] = useState('');
   const [newSample, setNewSample] = useState({ platform: '', comment_text: '', notes: '' });
   const [newSite, setNewSite] = useState({ site_name: '', site_url: '', site_type: 'forum', notes: '' });
+  const [editDescription, setEditDescription] = useState('');
+  const [editVoicePrompt, setEditVoicePrompt] = useState('');
+  const [editCta, setEditCta] = useState('');
+  const [editAudience, setEditAudience] = useState('');
+
+  // Refs for focus management
+  const descriptionRef = useRef(null);
+  const voicePromptRef = useRef(null);
+  const ctaRef = useRef(null);
+  const audienceRef = useRef(null);
+  const keywordsRef = useRef(null);
+  const sampleCommentRef = useRef(null);
+  const siteNameRef = useRef(null);
+
+  // Focus management for edit modals
+  useLayoutEffect(() => {
+    if (showDescriptionModal && descriptionRef.current) {
+      descriptionRef.current.focus();
+    }
+  }, [showDescriptionModal]);
+
+  useLayoutEffect(() => {
+    if (showVoicePromptModal && voicePromptRef.current) {
+      voicePromptRef.current.focus();
+    }
+  }, [showVoicePromptModal]);
+
+  useLayoutEffect(() => {
+    if (showCtaModal && ctaRef.current) {
+      ctaRef.current.focus();
+    }
+  }, [showCtaModal]);
+
+  useLayoutEffect(() => {
+    if (showAudienceModal && audienceRef.current) {
+      audienceRef.current.focus();
+    }
+  }, [showAudienceModal]);
+
+  useLayoutEffect(() => {
+    if (showKeywordModal && keywordsRef.current) {
+      keywordsRef.current.focus();
+    }
+  }, [showKeywordModal]);
+
+  useLayoutEffect(() => {
+    if (showSampleModal && sampleCommentRef.current) {
+      sampleCommentRef.current.focus();
+    }
+  }, [showSampleModal]);
+
+  useLayoutEffect(() => {
+    if (showSiteModal && siteNameRef.current) {
+      siteNameRef.current.focus();
+    }
+  }, [showSiteModal]);
 
   // Loading state
   if (loading) {
@@ -158,6 +218,56 @@ export default function ClientDetail() {
     }
   };
 
+  // Handle opening individual edit modals
+  const handleOpenDescriptionModal = () => {
+    setEditDescription(client.description || '');
+    setShowDescriptionModal(true);
+  };
+
+  const handleOpenVoicePromptModal = () => {
+    setEditVoicePrompt(client.voice_prompt || '');
+    setShowVoicePromptModal(true);
+  };
+
+  const handleOpenCtaModal = () => {
+    setEditCta(client.default_cta || '');
+    setShowCtaModal(true);
+  };
+
+  const handleOpenAudienceModal = () => {
+    setEditAudience(client.target_audience || '');
+    setShowAudienceModal(true);
+  };
+
+  // Handle saving individual fields
+  const handleSaveDescription = async () => {
+    const { error } = await update({ description: editDescription });
+    if (!error) {
+      setShowDescriptionModal(false);
+    }
+  };
+
+  const handleSaveVoicePrompt = async () => {
+    const { error } = await update({ voice_prompt: editVoicePrompt });
+    if (!error) {
+      setShowVoicePromptModal(false);
+    }
+  };
+
+  const handleSaveCta = async () => {
+    const { error } = await update({ default_cta: editCta });
+    if (!error) {
+      setShowCtaModal(false);
+    }
+  };
+
+  const handleSaveAudience = async () => {
+    const { error } = await update({ target_audience: editAudience });
+    if (!error) {
+      setShowAudienceModal(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -219,7 +329,18 @@ export default function ClientDetail() {
         <div className="space-y-6">
           {/* Description */}
           <Card>
-            <Card.Header>
+            <Card.Header
+              actions={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  leftIcon={Edit}
+                  onClick={handleOpenDescriptionModal}
+                >
+                  Edit
+                </Button>
+              }
+            >
               <Card.Title>Description</Card.Title>
             </Card.Header>
             <p className="text-gray-600">
@@ -231,14 +352,24 @@ export default function ClientDetail() {
           <Card>
             <Card.Header
               actions={
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  leftIcon={Copy}
-                  onClick={() => handleCopyPrompt(false)}
-                >
-                  Copy
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    leftIcon={Copy}
+                    onClick={() => handleCopyPrompt(false)}
+                  >
+                    Copy
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    leftIcon={Edit}
+                    onClick={handleOpenVoicePromptModal}
+                  >
+                    Edit
+                  </Button>
+                </div>
               }
             >
               <Card.Title>Voice Prompt</Card.Title>
@@ -276,7 +407,18 @@ export default function ClientDetail() {
           {/* Default CTA */}
           {client.default_cta && (
             <Card>
-              <Card.Header>
+              <Card.Header
+                actions={
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    leftIcon={Edit}
+                    onClick={handleOpenCtaModal}
+                  >
+                    Edit
+                  </Button>
+                }
+              >
                 <Card.Title>Default Call-to-Action</Card.Title>
               </Card.Header>
               <p className="text-gray-600">{client.default_cta}</p>
@@ -286,7 +428,18 @@ export default function ClientDetail() {
           {/* Target Audience */}
           {client.target_audience && (
             <Card>
-              <Card.Header>
+              <Card.Header
+                actions={
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    leftIcon={Edit}
+                    onClick={handleOpenAudienceModal}
+                  >
+                    Edit
+                  </Button>
+                }
+              >
                 <Card.Title>Target Audience</Card.Title>
               </Card.Header>
               <p className="text-gray-600">{client.target_audience}</p>
@@ -524,6 +677,7 @@ export default function ClientDetail() {
         }
       >
         <Input
+          ref={keywordsRef}
           label="Keywords"
           placeholder="keyword1, keyword2, keyword3"
           value={newKeywords}
@@ -565,6 +719,7 @@ export default function ClientDetail() {
             onChange={(value) => setNewSample(s => ({ ...s, platform: value }))}
           />
           <TextArea
+            ref={sampleCommentRef}
             label="Comment Text"
             placeholder="Enter a sample comment that represents this client's voice..."
             value={newSample.comment_text}
@@ -598,6 +753,7 @@ export default function ClientDetail() {
       >
         <div className="space-y-4">
           <Input
+            ref={siteNameRef}
             label="Site Name"
             placeholder="e.g., r/HomeImprovement"
             value={newSite.site_name}
@@ -631,6 +787,114 @@ export default function ClientDetail() {
             onChange={(e) => setNewSite(s => ({ ...s, notes: e.target.value }))}
           />
         </div>
+      </Modal>
+
+      {/* Edit Description Modal */}
+      <Modal
+        isOpen={showDescriptionModal}
+        onClose={() => setShowDescriptionModal(false)}
+        title="Edit Description"
+        size="lg"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setShowDescriptionModal(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveDescription}>
+              Save Changes
+            </Button>
+          </>
+        }
+      >
+        <TextArea
+          ref={descriptionRef}
+          label="Description"
+          placeholder="Describe this client..."
+          value={editDescription}
+          onChange={(e) => setEditDescription(e.target.value)}
+          rows={4}
+        />
+      </Modal>
+
+      {/* Edit Voice Prompt Modal */}
+      <Modal
+        isOpen={showVoicePromptModal}
+        onClose={() => setShowVoicePromptModal(false)}
+        title="Edit Voice Prompt"
+        size="lg"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setShowVoicePromptModal(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveVoicePrompt}>
+              Save Changes
+            </Button>
+          </>
+        }
+      >
+        <TextArea
+          ref={voicePromptRef}
+          label="Voice Prompt"
+          placeholder="Define the personality and style for this client's comments..."
+          value={editVoicePrompt}
+          onChange={(e) => setEditVoicePrompt(e.target.value)}
+          rows={6}
+        />
+      </Modal>
+
+      {/* Edit Default CTA Modal */}
+      <Modal
+        isOpen={showCtaModal}
+        onClose={() => setShowCtaModal(false)}
+        title="Edit Default Call-to-Action"
+        size="lg"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setShowCtaModal(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveCta}>
+              Save Changes
+            </Button>
+          </>
+        }
+      >
+        <TextArea
+          ref={ctaRef}
+          label="Default Call-to-Action"
+          placeholder="Enter the default call-to-action text..."
+          value={editCta}
+          onChange={(e) => setEditCta(e.target.value)}
+          rows={3}
+        />
+      </Modal>
+
+      {/* Edit Target Audience Modal */}
+      <Modal
+        isOpen={showAudienceModal}
+        onClose={() => setShowAudienceModal(false)}
+        title="Edit Target Audience"
+        size="lg"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setShowAudienceModal(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveAudience}>
+              Save Changes
+            </Button>
+          </>
+        }
+      >
+        <TextArea
+          ref={audienceRef}
+          label="Target Audience"
+          placeholder="Describe the target audience for this client..."
+          value={editAudience}
+          onChange={(e) => setEditAudience(e.target.value)}
+          rows={4}
+        />
       </Modal>
     </div>
   );
