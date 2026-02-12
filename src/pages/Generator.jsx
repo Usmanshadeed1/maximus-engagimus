@@ -4,7 +4,7 @@
  * Main interface for generating social media comments.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sparkles, Copy, ExternalLink, AlertCircle } from 'lucide-react';
 import { useGenerator } from '../hooks/useGenerator';
 import { addClientSampleComment } from '../lib/supabase';
@@ -29,7 +29,7 @@ export default function Generator() {
   } = useGenerator();
 
   const { clients, clientOptions, loading: clientsLoading, getClientById } = useClientSelect();
-  const { hasConfiguredProvider, loading: providersLoading } = useAIProviders();
+  const { providers, defaultProvider, hasConfiguredProvider, loading: providersLoading } = useAIProviders();
   const { chatLinks } = useAIChatLinks();
 
   // Form state
@@ -42,7 +42,15 @@ export default function Generator() {
     hashtags: '',
     numOptions: 3,
     includeCta: false,
+    providerId: '',
   });
+
+  // Set default provider when available
+  useEffect(() => {
+    if (defaultProvider && !formData.providerId) {
+      setFormData(prev => ({ ...prev, providerId: defaultProvider.id }));
+    }
+  }, [defaultProvider, formData.providerId]);
 
   // Handle form change
   const handleFormChange = (field, value) => {
@@ -61,6 +69,7 @@ export default function Generator() {
       hashtags: formData.hashtags,
       numOptions: formData.numOptions,
       includeCta: formData.includeCta,
+      providerId: formData.providerId || undefined,
     });
   };
 
@@ -216,6 +225,7 @@ export default function Generator() {
               formData={formData}
               onChange={handleFormChange}
               clientOptions={clientOptions}
+              providers={providers}
               onGenerate={handleGenerate}
               loading={loading}
               hasProvider={hasConfiguredProvider}

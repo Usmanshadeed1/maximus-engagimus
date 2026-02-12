@@ -40,6 +40,7 @@ export function useGenerator() {
       hashtags,
       numOptions = 3,
       includeCta = false,
+      providerId,
     } = input;
 
     if (!client) {
@@ -96,6 +97,7 @@ export function useGenerator() {
       const result = await generateCompletion(messages, {
         temperature: 0.8,
         maxTokens: 1500,
+        providerId,
       });
 
       // Parse the response with max length enforcement

@@ -248,12 +248,13 @@ export async function generateCompletion(messages, options = {}) {
   const {
     maxRetries = 3,
     retryDelay = 1000,
+    providerId,
     ...completionOptions
   } = options;
 
   // Get all active providers
   const providers = await getAIProviders();
-  const activeProviders = providers
+  let activeProviders = providers
     .filter(p => p.is_active && p.api_key_encrypted)
     .sort((a, b) => {
       // Default provider first, then by fallback order
@@ -261,6 +262,19 @@ export async function generateCompletion(messages, options = {}) {
       if (b.is_default) return 1;
       return a.fallback_order - b.fallback_order;
     });
+
+  // If a specific provider is requested, use only that one
+  if (providerId) {
+    const selectedProvider = activeProviders.find(p => p.id === providerId);
+    if (!selectedProvider) {
+      throw new AIError(
+        'Selected AI provider is not available or not configured.',
+        'PROVIDER_NOT_FOUND',
+        null
+      );
+    }
+    activeProviders = [selectedProvider];
+  }
 
   if (activeProviders.length === 0) {
     throw new AIError(

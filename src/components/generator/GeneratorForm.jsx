@@ -34,6 +34,7 @@ export default function GeneratorForm({
   formData,
   onChange,
   clientOptions,
+  providers,
   onGenerate,
   loading,
   hasProvider,
@@ -50,6 +51,15 @@ export default function GeneratorForm({
     const value = valueOrEvent?.target ? valueOrEvent.target.value : valueOrEvent;
     onChange(field, value);
   };
+
+  // Provider options for dropdown
+  const providerOptions = providers
+    ?.filter(p => p.is_active && p.api_key_encrypted)
+    .map(p => ({
+      value: p.id,
+      label: `${p.provider_name} - ${p.model_name}${p.is_default ? ' (Default)' : ''}`,
+      isDefault: p.is_default,
+    })) || [];
 
   return (
     <div className="space-y-4">
@@ -110,6 +120,18 @@ export default function GeneratorForm({
           onChange={handleChange('includeCta')}
         />
       </div>
+
+      {/* AI Provider selection */}
+      {hasProvider && providerOptions.length > 0 && (
+        <Dropdown
+          label="AI Provider"
+          placeholder="Select AI provider"
+          options={providerOptions}
+          value={formData.providerId}
+          onChange={handleChange('providerId')}
+          helper="Choose which AI provider to use for generation"
+        />
+      )}
 
       {/* Advanced options toggle */}
       <button
