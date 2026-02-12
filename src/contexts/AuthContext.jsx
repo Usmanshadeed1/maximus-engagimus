@@ -43,10 +43,10 @@ export function AuthProvider({ children }) {
       
       if (orgError) throw orgError;
       
-      // Update user with organization_id
+      // Update user with organization_id and set as owner
       const { error: updateError } = await supabase
         .from('users')
-        .update({ organization_id: org.id })
+        .update({ organization_id: org.id, role: 'owner' })
         .eq('id', currentProfile.id);
       
       if (updateError) throw updateError;
