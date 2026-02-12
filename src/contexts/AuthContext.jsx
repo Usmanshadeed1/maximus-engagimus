@@ -26,12 +26,12 @@ export function AuthProvider({ children }) {
   const ensureOrganization = async (currentProfile, sessionUser) => {
     if (currentProfile?.organization) return currentProfile; // Already has org
     if (!currentProfile) return null;
-    
+
     try {
       // Create organization
       const orgName = `${currentProfile.full_name || sessionUser?.email || 'User'}'s Organization`;
       const orgSlug = orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      
+
       const { data: org, error: orgError } = await supabase
         .from('organizations')
         .insert({
@@ -40,17 +40,17 @@ export function AuthProvider({ children }) {
         })
         .select()
         .single();
-      
+
       if (orgError) throw orgError;
-      
+
       // Update user with organization_id and set as owner
       const { error: updateError } = await supabase
         .from('users')
         .update({ organization_id: org.id, role: 'owner' })
         .eq('id', currentProfile.id);
-      
+
       if (updateError) throw updateError;
-      
+
       // Update profile object
       currentProfile.organization_id = org.id;
       currentProfile.organization = org;
