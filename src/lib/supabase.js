@@ -962,4 +962,45 @@ export function unsubscribe(subscription) {
   return supabase.removeChannel(subscription);
 }
 
+// ============================================
+// SYSTEM PROMPT TEMPLATES
+// ============================================
+
+/**
+ * Get custom system prompt template for organization
+ */
+export async function getSystemPromptTemplate(organizationId) {
+  const { data, error } = await supabase
+    .from('organizations')
+    .select('system_prompt_template')
+    .eq('id', organizationId)
+    .single();
+  
+  if (error) return null;
+  return data?.system_prompt_template || null;
+}
+
+/**
+ * Save system prompt template for organization
+ */
+export async function saveSystemPromptTemplate(organizationId, template) {
+  try {
+    const { data, error } = await supabase
+      .from('organizations')
+      .update({ system_prompt_template: template })
+      .eq('id', organizationId)
+      .select();
+    
+    if (error) {
+      console.error('Supabase error saving template:', error);
+      throw new Error(error.message || 'Failed to save template');
+    }
+    
+    return data;
+  } catch (err) {
+    console.error('Error in saveSystemPromptTemplate:', err);
+    throw err;
+  }
+}
+
 export default supabase;

@@ -11,13 +11,14 @@ import {
   MessageSquare,
   User,
   Building,
+  FileText,
   Plus,
   RefreshCw,
   ExternalLink,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useAIProviders, useAIChatLinks, usePlatformPrompts } from '../hooks/useAIProviders';
-import { getOrganizationMembers, updateUserRole, removeOrganizationMember } from '../lib/supabase';
+import { getOrganizationMembers, updateUserRole, removeOrganizationMember, getSystemPromptTemplate, saveSystemPromptTemplate } from '../lib/supabase';
 import {
   Button,
   Card,
@@ -37,6 +38,7 @@ import { toast } from '../components/ui/Toast';
 const TABS = [
   { id: 'ai-providers', label: 'AI Providers', icon: Bot },
   { id: 'platform-prompts', label: 'Platform Prompts', icon: MessageSquare },
+  { id: 'system-prompt', label: 'System Prompt', icon: FileText },
   { id: 'profile', label: 'Profile', icon: User },
   { id: 'organization', label: 'Organization', icon: Building },
 ];
@@ -86,6 +88,7 @@ export default function Settings() {
       {/* Tab content */}
       {activeTab === 'ai-providers' && <AIProvidersTab />}
       {activeTab === 'platform-prompts' && <PlatformPromptsTab />}
+      {activeTab === 'system-prompt' && <SystemPromptTab />}
       {activeTab === 'profile' && <ProfileTab />}
       {activeTab === 'organization' && <OrganizationTab />}
     </div>
@@ -481,6 +484,192 @@ function ProfileTab() {
         <p className="text-sm text-gray-600">
           To change your password, use the "Forgot Password" option on the login page.
         </p>
+      </Card>
+    </div>
+  );
+}
+
+/**
+ * System Prompt Tab
+ */
+function SystemPromptTab() {
+  const { organization } = useAuth();
+  const [template, setTemplate] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  // Default template with ALL sections - split by --- between system and user prompts
+  const defaultTemplate = `You are a social media engagement specialist writing comments for \${client.name}.
+
+## CLIENT PROFILE
+- Industry: \${client.industry}
+- Description: \${client.description}
+- Target Audience: \${client.target_audience}
+- Keywords: \${keywords}
+
+## VOICE & STYLE
+\${voicePrompt}
+
+## CALL TO ACTION (use subtly when appropriate)
+\${client.default_cta}
+
+## SAMPLE COMMENTS (match this style)
+\${sampleComments}
+
+## PLATFORM-SPECIFIC GUIDELINES (\${platform.toUpperCase()})
+\${platformPrompt.style_prompt}
+Maximum length: \${platformPrompt.max_length} characters
+
+## RULES
+1. Sound human and authentic - never robotic or generic
+2. Match the platform's typical tone and length
+3. Add value to the conversation
+4. Avoid hashtags unless specifically requested
+5. Never repeat phrases from existing comments
+6. Each option should have a distinctly different approach
+7. Keep comments concise and impactful
+
+---
+
+## CONTENT TO RESPOND TO
+\${content}
+
+## POSTER INFORMATION
+\${posterInfo}
+
+## HASHTAGS USED
+\${hashtags}
+
+## EXISTING COMMENTS (avoid similar phrasing)
+\${existingComments}
+
+## YOUR TASK
+Generate exactly \${numOptions} unique comment options. Each should take a different approach:
+
+1. **Conversational** - Friendly and casual, like chatting with a friend
+2. **Professional** - Polished and knowledgeable, establishes expertise  
+3. **Question-Based** - Asks an engaging question to spark discussion
+4. **Value-Add** - Provides a helpful tip, insight, or resource
+5. **Brief** - Short and punchy, gets straight to the point
+
+\${ctaOption}
+
+## RESPONSE FORMAT
+Respond with a JSON array. Each object should have:
+- "style": The approach name (conversational, professional, question, value-add, or brief)
+- "text": The comment text
+
+Example:
+[
+  {"style": "conversational", "text": "This is so relatable! I've been..."},
+  {"style": "professional", "text": "Great insights on..."},
+  {"style": "question", "text": "Have you considered..."}
+]
+
+Generate \${numOptions} options now:`;
+
+  const loadTemplate = async () => {
+    if (!organization?.id) {
+      setTemplate(defaultTemplate);
+      setLoading(false);
+      return;
+    }
+    try {
+      const customTemplate = await getSystemPromptTemplate(organization.id);
+      setTemplate(customTemplate || defaultTemplate);
+    } catch (err) {
+      console.error('Error loading template:', err);
+      setTemplate(defaultTemplate);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadTemplate();
+  }, [organization?.id]);
+
+  const handleSave = async () => {
+    if (!organization?.id) {
+      toast.error('Organization ID not found');
+      return;
+    }
+    
+    if (!template || typeof template !== 'string' || !template.trim()) {
+      toast.error('Template cannot be empty');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const result = await saveSystemPromptTemplate(organization.id, template);
+      toast.success('✅ System prompt template saved successfully');
+    } catch (err) {
+      console.error('Error saving template:', err);
+      toast.error(`Failed to save: ${err.message || 'Unknown error'}`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleReset = () => {
+    if (confirm('Reset to default template?')) {
+      setTemplate(defaultTemplate);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-12">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">System Prompt Template</h2>
+        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+          Edit the COMPLETE master prompt template used for AI comment generation. Use placeholders that auto-fill during generation. Split template with "---" between system instructions (top) and user task (bottom). Keep all placeholders intact!
+        </p>
+      </div>
+
+      <Card>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Complete Master Prompt Template (system --- user)
+            </label>
+            <TextArea
+              value={template || ''}
+              onChange={(e) => setTemplate(typeof e === 'string' ? e : (e.target?.value || e || ''))}
+              rows={40}
+              placeholder="Edit your complete system + user prompt template..."
+              className="font-mono text-sm"
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              System Placeholders (before ---): \${'${client.name}'}, \${'${client.industry}'}, \${'${client.description}'}, \${'${client.target_audience}'}, \${'${keywords}'}, \${'${voicePrompt}'}, \${'${client.default_cta}'}, \${'${sampleComments}'}, \${'${platform.toUpperCase()}'}, \${'${platformPrompt.style_prompt}'}, \${'${platformPrompt.max_length}'}<br/>
+              User Placeholders (after ---): \${'${content}'}, \${'${posterInfo}'}, \${'${hashtags}'}, \${'${existingComments}'}, \${'${numOptions}'}, \${'${ctaOption}'}
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+            <Button
+              variant="outline"
+              onClick={handleReset}
+              disabled={saving}
+            >
+              Reset to Default
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={saving || !template || typeof template !== 'string' || !template.trim()}
+            >
+              {saving ? <Spinner size="sm" /> : 'Save Template'}
+            </Button>
+          </div>
+        </div>
       </Card>
     </div>
   );

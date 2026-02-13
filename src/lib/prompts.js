@@ -14,6 +14,7 @@ export function buildSystemPrompt(options) {
     platform,
     platformPrompt,
     includeCta = false,
+    customTemplate = null,
   } = options;
 
   const voicePrompt = includeCta && client.voice_prompt_with_cta
@@ -27,6 +28,37 @@ export function buildSystemPrompt(options) {
 
   const keywords = client.keywords?.map(k => k.keyword).join(', ') || 'None';
 
+  // If custom template provided, use it with variable substitution
+  if (customTemplate) {
+    // Extract system prompt part (before ---)
+    const parts = customTemplate.split('---');
+    let systemPromptPart = parts[0].trim();
+    
+    // If CTA is NOT included, remove the entire CTA section from the template
+    if (!includeCta) {
+      // Remove the ## CALL TO ACTION section and everything until the next section
+      systemPromptPart = systemPromptPart.replace(
+        /## CALL TO ACTION.*?\n[^\n]*\$\{client\.default_cta\}[^\n]*\n\n/s,
+        ''
+      );
+    }
+    
+    // Substitute all placeholders
+    return systemPromptPart
+      .replace(/\$\{client\.name\}/g, client.name)
+      .replace(/\$\{client\.industry\}/g, client.industry)
+      .replace(/\$\{client\.description\}/g, client.description || 'Not provided')
+      .replace(/\$\{client\.target_audience\}/g, client.target_audience || 'General audience')
+      .replace(/\$\{client\.default_cta\}/g, client.default_cta || '')
+      .replace(/\$\{keywords\}/g, keywords)
+      .replace(/\$\{voicePrompt\}/g, voicePrompt)
+      .replace(/\$\{sampleComments\}/g, sampleComments)
+      .replace(/\$\{platform\.toUpperCase\(\)\}/g, platform.toUpperCase())
+      .replace(/\$\{platformPrompt\.style_prompt\}/g, platformPrompt?.style_prompt || 'Write in a professional yet approachable tone.')
+      .replace(/\$\{platformPrompt\.max_length\}/g, platformPrompt?.max_length || '');
+  }
+
+  // Default template
   return `You are a social media engagement specialist writing comments for ${client.name}.
 
 ## CLIENT PROFILE
@@ -69,7 +101,37 @@ export function buildUserPrompt(options) {
     hashtags,
     numOptions = 3,
     includeCta = false,
+    customTemplate = null,
   } = options;
+
+  // If custom template provided, extract and use the user prompt part
+  if (customTemplate) {
+    const parts = customTemplate.split('---');
+    if (parts.length === 2) {
+      let userPromptPart = parts[1].trim();
+      
+      // Remove empty optional sections
+      if (!posterInfo) {
+        userPromptPart = userPromptPart.replace(/## POSTER INFORMATION\s*\n\$\{posterInfo\}\s*\n\n/g, '');
+      }
+      if (!hashtags) {
+        userPromptPart = userPromptPart.replace(/## HASHTAGS USED\s*\n\$\{hashtags\}\s*\n\n/g, '');
+      }
+      if (!existingComments) {
+        userPromptPart = userPromptPart.replace(/## EXISTING COMMENTS.*?\n\$\{existingComments\}\s*\n\n/g, '');
+      }
+      
+      // Substitute placeholders
+      userPromptPart = userPromptPart
+        .replace(/\$\{content\}/g, content || '')
+        .replace(/\$\{posterInfo\}/g, posterInfo || '')
+        .replace(/\$\{hashtags\}/g, hashtags || '')
+        .replace(/\$\{existingComments\}/g, existingComments || '')
+        .replace(/\$\{numOptions\}/g, numOptions)
+        .replace(/\$\{ctaOption\}/g, includeCta ? 'Include a subtle call-to-action where it feels natural (not forced).' : 'Do NOT include any promotional content or calls-to-action.');
+      return userPromptPart;
+    }
+  }
 
   let prompt = `## CONTENT TO RESPOND TO
 ${content}`;
@@ -315,6 +377,7 @@ export function generateClipboardPrompt(options) {
     hashtags,
     numOptions = 3,
     includeCta = false,
+    customTemplate = null,
   } = options;
 
   // Use provided platformPrompt or fall back to defaults
@@ -325,6 +388,7 @@ export function generateClipboardPrompt(options) {
     platform,
     platformPrompt: effectivePlatformPrompt,
     includeCta,
+    customTemplate,
   });
 
   const userPrompt = buildUserPrompt({
@@ -334,6 +398,7 @@ export function generateClipboardPrompt(options) {
     hashtags,
     numOptions,
     includeCta,
+    customTemplate,
   });
 
   return `${systemPrompt}

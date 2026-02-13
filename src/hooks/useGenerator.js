@@ -13,14 +13,16 @@ import {
   generateClipboardPrompt,
   getPlatformPromptDefaults,
 } from '../lib/prompts';
-import { saveGeneratedComments, markCommentAsUsed, getPlatformPrompt } from '../lib/supabase';
+import { saveGeneratedComments, markCommentAsUsed, getPlatformPrompt, getSystemPromptTemplate } from '../lib/supabase';
 import { copyToClipboard } from '../lib/utils';
 import { toast } from '../components/ui/Toast';
+import { useAuth } from '../contexts/AuthContext';
 
 /**
  * Main hook for comment generation
  */
 export function useGenerator() {
+  const { organization } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [options, setOptions] = useState([]);
@@ -74,12 +76,23 @@ export function useGenerator() {
         platformPrompt = getPlatformPromptDefaults(platform);
       }
 
+      // Load custom system prompt template if available
+      let customTemplate = null;
+      if (organization?.id) {
+        try {
+          customTemplate = await getSystemPromptTemplate(organization.id);
+        } catch (err) {
+          console.error('Error loading custom template:', err);
+        }
+      }
+
       // Build prompts
       const systemPrompt = buildSystemPrompt({
         client,
         platform,
         platformPrompt,
         includeCta,
+        customTemplate,
       });
 
       const userPrompt = buildUserPrompt({
@@ -233,6 +246,16 @@ export function useGenerator() {
         platformPrompt = getPlatformPromptDefaults(platform);
       }
 
+      // Load custom system prompt template if available
+      let customTemplate = null;
+      if (organization?.id) {
+        try {
+          customTemplate = await getSystemPromptTemplate(organization.id);
+        } catch (err) {
+          console.error('Error loading custom template:', err);
+        }
+      }
+
       const prompt = generateClipboardPrompt({
         client,
         platform,
@@ -243,6 +266,7 @@ export function useGenerator() {
         hashtags,
         numOptions,
         includeCta,
+        customTemplate,
       });
 
       const success = await copyToClipboard(prompt);
