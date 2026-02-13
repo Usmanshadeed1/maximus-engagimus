@@ -21,6 +21,7 @@ export function buildSystemPrompt(options) {
     : client.voice_prompt;
 
   const sampleComments = client.sample_comments
+    ?.filter(s => !s.platform || s.platform === platform) // Filter by platform or include "any platform" samples
     ?.map((s, i) => `${i + 1}. "${s.comment_text}"`)
     .join('\n') || 'No samples provided.';
 
