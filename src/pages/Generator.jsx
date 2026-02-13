@@ -7,7 +7,7 @@
 import { useState, useEffect } from 'react';
 import { Sparkles, Copy, ExternalLink, AlertCircle } from 'lucide-react';
 import { useGenerator } from '../hooks/useGenerator';
-import { addClientSampleComment } from '../lib/supabase';
+import { addClientSampleComment, getClient } from '../lib/supabase';
 import { useClientSelect } from '../hooks/useClients';
 import { useAIProviders, useAIChatLinks } from '../hooks/useAIProviders';
 import { Card, Button, Spinner, Badge, Modal, toast } from '../components/ui';
@@ -45,12 +45,40 @@ export default function Generator() {
     providerId: '',
   });
 
+  // Full client data for generation (with keywords and sample comments)
+  const [fullClient, setFullClient] = useState(null);
+  const [clientLoading, setClientLoading] = useState(false);
+
   // Set default provider when available
   useEffect(() => {
     if (defaultProvider && !formData.providerId) {
       setFormData(prev => ({ ...prev, providerId: defaultProvider.id }));
     }
   }, [defaultProvider, formData.providerId]);
+
+  // Fetch full client data when clientId changes
+  useEffect(() => {
+    const fetchFullClient = async () => {
+      if (!formData.clientId) {
+        setFullClient(null);
+        return;
+      }
+
+      setClientLoading(true);
+      try {
+        const clientData = await getClient(formData.clientId);
+        setFullClient(clientData);
+      } catch (err) {
+        console.error('Failed to fetch full client data:', err);
+        toast.error('Failed to load client data');
+        setFullClient(null);
+      } finally {
+        setClientLoading(false);
+      }
+    };
+
+    fetchFullClient();
+  }, [formData.clientId]);
 
   // Handle form change
   const handleFormChange = (field, value) => {
@@ -59,9 +87,13 @@ export default function Generator() {
 
   // Handle generate
   const handleGenerate = async () => {
-    const client = getClientById(formData.clientId);
+    if (!fullClient) {
+      toast.error('Client data not loaded');
+      return;
+    }
+
     await generate({
-      client,
+      client: fullClient,
       platform: formData.platform,
       content: formData.content,
       existingComments: formData.existingComments,
@@ -75,9 +107,13 @@ export default function Generator() {
 
   // Handle "No API" mode
   const handleNoApiGenerate = async (chatLink) => {
-    const client = getClientById(formData.clientId);
+    if (!fullClient) {
+      toast.error('Client data not loaded');
+      return;
+    }
+
     const prompt = await generatePromptForClipboard({
-      client,
+      client: fullClient,
       platform: formData.platform,
       content: formData.content,
       existingComments: formData.existingComments,
@@ -122,14 +158,14 @@ export default function Generator() {
 
   // Confirm save to client sample comments
   const handleConfirmSave = async () => {
-    if (!formData.clientId) {
-      toast.error('Please select a client to save this comment to');
+    if (!fullClient) {
+      toast.error('Client data not loaded');
       return;
     }
 
     try {
       setSaving(true);
-      await addClientSampleComment(formData.clientId, {
+      await addClientSampleComment(fullClient.id, {
         platform: formData.platform || null,
         comment_text: saveText,
         notes: '',

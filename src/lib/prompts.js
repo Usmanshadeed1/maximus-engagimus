@@ -24,12 +24,15 @@ export function buildSystemPrompt(options) {
     ?.map((s, i) => `${i + 1}. "${s.comment_text}"`)
     .join('\n') || 'No samples provided.';
 
+  const keywords = client.keywords?.map(k => k.keyword).join(', ') || 'None';
+
   return `You are a social media engagement specialist writing comments for ${client.name}.
 
 ## CLIENT PROFILE
 - Industry: ${client.industry}
 - Description: ${client.description || 'Not provided'}
 - Target Audience: ${client.target_audience || 'General audience'}
+- Keywords: ${keywords}
 
 ## VOICE & STYLE
 ${voicePrompt}
