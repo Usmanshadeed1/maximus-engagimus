@@ -190,14 +190,38 @@ export function AuthProvider({ children }) {
               profileData = await ensureOrganization(profileData, session.user);
               
               if (mounted && profileData) {
-                // Cache for 10 minutes
-                setCached('userProfile', profileData, 10 * 60 * 1000);
+                // Cache for 24 hours
+                setCached('userProfile', profileData, 24 * 60 * 60 * 1000);
                 setUser(session.user);
                 setProfile(profileData);
                 setOrganization(profileData?.organization || null);
               }
             } catch (profileErr) {
-              if (profileErr?.code === 'PGRST116' || profileErr?.message?.includes('No rows')) {
+              if (profileErr?.message === 'Profile fetch timeout') {
+                // Profile fetch timed out — retry once without timeout in background
+                console.warn('[Auth] Profile fetch timed out, retrying without timeout...');
+                try {
+                  let profileData = await getUserProfile();
+                  profileData = await ensureOrganization(profileData, session.user);
+                  if (mounted && profileData) {
+                    setCached('userProfile', profileData, 24 * 60 * 60 * 1000);
+                    setUser(session.user);
+                    setProfile(profileData);
+                    setOrganization(profileData?.organization || null);
+                  }
+                } catch (retryErr) {
+                  console.error('[Auth] Profile retry also failed:', retryErr);
+                  // Fall through to cache fallback below
+                  const cached = getCached('userProfile');
+                  if (cached) {
+                    setUser(session.user);
+                    setProfile(cached);
+                    setOrganization(cached?.organization || null);
+                  } else {
+                    setUser(session.user);
+                  }
+                }
+              } else if (profileErr?.code === 'PGRST116' || profileErr?.message?.includes('No rows')) {
                 // Insert user profile
                 const { error: insertError } = await supabase
                   .from('users')
@@ -238,8 +262,8 @@ export function AuthProvider({ children }) {
                 profileData = await ensureOrganization(profileData, session.user);
 
                 if (mounted && profileData) {
-                  // Cache for 10 minutes
-                  setCached('userProfile', profileData, 10 * 60 * 1000);
+                  // Cache for 24 hours
+                  setCached('userProfile', profileData, 24 * 60 * 60 * 1000);
                   setUser(session.user);
                   setProfile(profileData);
                   setOrganization(profileData?.organization || null);
@@ -303,7 +327,7 @@ export function AuthProvider({ children }) {
                 if (mounted) {
                   setUser(session.user);
                   if (profileData) {
-                    setCached('userProfile', profileData, 10 * 60 * 1000);
+                    setCached('userProfile', profileData, 24 * 60 * 60 * 1000);
                     setProfile(profileData);
                     setOrganization(profileData?.organization || null);
                   }
@@ -317,14 +341,28 @@ export function AuthProvider({ children }) {
               }
             } else {
               // For all other events (INITIAL_SESSION, TOKEN_REFRESHED, visibility changes, etc)
-              // Just restore from cache without fetching
+              // Restore from cache, or fetch fresh if cache expired
               const cached = getCached('userProfile');
               if (cached) {
                 setUser(session.user);
                 setProfile(cached);
                 setOrganization(cached?.organization || null);
               } else {
-                setUser(session.user);
+                // Cache expired or empty — fetch fresh profile from DB
+                try {
+                  const profileData = await getUserProfile();
+                  if (mounted && profileData) {
+                    setCached('userProfile', profileData, 24 * 60 * 60 * 1000);
+                    setUser(session.user);
+                    setProfile(profileData);
+                    setOrganization(profileData?.organization || null);
+                  } else {
+                    setUser(session.user);
+                  }
+                } catch (fetchErr) {
+                  console.error('[Auth] Failed to fetch profile on auth change:', fetchErr);
+                  setUser(session.user);
+                }
               }
             }
           } else {
