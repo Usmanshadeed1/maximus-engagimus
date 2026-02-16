@@ -13,6 +13,7 @@ import { useAIProviders, useAIChatLinks } from '../hooks/useAIProviders';
 import { Card, Button, Spinner, Badge, Modal, toast } from '../components/ui';
 import GeneratorForm from '../components/generator/GeneratorForm';
 import CommentOption from '../components/generator/CommentOption';
+import PromptEditorModal from '../components/generator/PromptEditorModal';
 
 export default function Generator() {
   const {
@@ -48,6 +49,10 @@ export default function Generator() {
   // Full client data for generation (with keywords and sample comments)
   const [fullClient, setFullClient] = useState(null);
   const [clientLoading, setClientLoading] = useState(false);
+
+  // Edited prompt state for this generation session
+  const [editedPrompt, setEditedPrompt] = useState(null);
+  const [showPromptEditor, setShowPromptEditor] = useState(false);
 
   // Set default provider when available
   useEffect(() => {
@@ -85,11 +90,55 @@ export default function Generator() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  // Handle open prompt editor
+  const handleOpenPromptEditor = async () => {
+    if (!fullClient) {
+      toast.error('Client data not loaded');
+      return;
+    }
+    setShowPromptEditor(true);
+  };
+
+  // Handle save edited prompt
+  const handleSaveEditedPrompt = (prompt) => {
+    setEditedPrompt(prompt);
+    setShowPromptEditor(false);
+    toast.success('Prompt saved for this generation');
+  };
+
+  // Handle close prompt editor
+  const handleClosePromptEditor = () => {
+    setShowPromptEditor(false);
+  };
+
   // Handle generate
   const handleGenerate = async () => {
     if (!fullClient) {
       toast.error('Client data not loaded');
       return;
+    }
+
+    // If there's an edited prompt, use it; otherwise generate normally
+    if (editedPrompt) {
+      // Split edited prompt by '---' and extract system/user parts
+      const parts = editedPrompt.split('---');
+      if (parts.length >= 2) {
+        await generate({
+          client: fullClient,
+          platform: formData.platform,
+          content: formData.content,
+          existingComments: formData.existingComments,
+          posterInfo: formData.posterInfo,
+          hashtags: formData.hashtags,
+          numOptions: formData.numOptions,
+          includeCta: formData.includeCta,
+          providerId: formData.providerId || undefined,
+          customFullPrompt: editedPrompt,
+        });
+        // Clear edited prompt after generation
+        setEditedPrompt(null);
+        return;
+      }
     }
 
     await generate({
@@ -267,6 +316,7 @@ export default function Generator() {
               hasProvider={hasConfiguredProvider}
               chatLinks={chatLinks}
               onNoApiGenerate={handleNoApiGenerate}
+              onOpenPromptEditor={handleOpenPromptEditor}
             />
           </Card>
         </div>
@@ -402,6 +452,18 @@ export default function Generator() {
           )}
         </div>
       </div>
+
+      {/* Prompt Editor Modal */}
+      {showPromptEditor && fullClient && (
+        <PromptEditorModal
+          isOpen={showPromptEditor}
+          fullClient={fullClient}
+          formData={formData}
+          onSave={handleSaveEditedPrompt}
+          onClose={handleClosePromptEditor}
+          generatePromptForClipboard={generatePromptForClipboard}
+        />
+      )}
     </div>
   );
 }

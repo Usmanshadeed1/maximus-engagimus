@@ -43,6 +43,7 @@ export function useGenerator() {
       numOptions = 3,
       includeCta = false,
       providerId,
+      customFullPrompt,
     } = input;
 
     if (!client) {
@@ -86,25 +87,35 @@ export function useGenerator() {
         }
       }
 
-      // Build prompts
-      const systemPrompt = buildSystemPrompt({
-        client,
-        platform,
-        platformPrompt,
-        includeCta,
-        customTemplate,
-      });
+      // Build prompts or use custom full prompt
+      let messages;
+      if (customFullPrompt) {
+        // Parse custom full prompt (format: "system prompt\n---\nuser prompt")
+        const parts = customFullPrompt.split('---');
+        const systemPrompt = parts[0]?.trim() || '';
+        const userPrompt = parts[1]?.trim() || '';
+        messages = buildCommentMessages(systemPrompt, userPrompt);
+      } else {
+        // Build prompts normally
+        const systemPrompt = buildSystemPrompt({
+          client,
+          platform,
+          platformPrompt,
+          includeCta,
+          customTemplate,
+        });
 
-      const userPrompt = buildUserPrompt({
-        content,
-        existingComments,
-        posterInfo,
-        hashtags,
-        numOptions,
-        includeCta,
-      });
+        const userPrompt = buildUserPrompt({
+          content,
+          existingComments,
+          posterInfo,
+          hashtags,
+          numOptions,
+          includeCta,
+        });
 
-      const messages = buildCommentMessages(systemPrompt, userPrompt);
+        messages = buildCommentMessages(systemPrompt, userPrompt);
+      }
 
       // Call AI provider
       const result = await generateCompletion(messages, {
@@ -172,7 +183,7 @@ export function useGenerator() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [organization]);
 
   /**
    * Mark an option as used
@@ -283,7 +294,7 @@ export function useGenerator() {
       toast.error('Failed to generate prompt');
       return null;
     }
-  }, []);
+  }, [organization]);
 
   /**
    * Clear current results

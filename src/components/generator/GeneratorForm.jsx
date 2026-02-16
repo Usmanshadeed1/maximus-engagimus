@@ -40,6 +40,7 @@ export default function GeneratorForm({
   hasProvider,
   chatLinks,
   onNoApiGenerate,
+  onOpenPromptEditor,
 }) {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
@@ -236,16 +237,29 @@ export default function GeneratorForm({
 
       {/* Quick copy prompt button (even with API) */}
       {hasProvider && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onNoApiGenerate(null)}
-          disabled={!isValid}
-          leftIcon={Copy}
-          className="w-full"
-        >
-          Copy Prompt Only
-        </Button>
+        <>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={onOpenPromptEditor}
+            disabled={!isValid}
+            leftIcon={Copy}
+            className="w-full"
+          >
+            Preview & Edit Prompt
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onNoApiGenerate(null)}
+            disabled={!isValid}
+            leftIcon={Copy}
+            className="w-full"
+          >
+            Copy Prompt Only
+          </Button>
+        </>
       )}
     </div>
   );
