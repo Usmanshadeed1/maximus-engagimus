@@ -113,7 +113,7 @@ export default function CommentOption({
           onClick={onSave}
           leftIcon={Plus}
         >
-          Save
+          Save sample comment
         </Button>
         {!option.isUsed && (
           <Button
