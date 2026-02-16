@@ -17,6 +17,7 @@ import {
   MessageSquare,
   ChevronDown,
   ChevronUp,
+  Download,
 } from 'lucide-react';
 import { useAnalyzer } from '../hooks/useAnalyzer';
 import { useClients } from '../hooks/useClients';
@@ -28,6 +29,7 @@ import {
   Input,
   Spinner,
   Badge,
+  toast,
 } from '../components/ui';
 
 export default function Analyzer() {
@@ -48,6 +50,7 @@ export default function Analyzer() {
   // Form state
   const [content, setContent] = useState('');
   const [contentUrl, setContentUrl] = useState('');
+  const [fetchingContent, setFetchingContent] = useState(false);
 
   // Handle analyze with keywords
   const handleAnalyzeKeywords = async () => {
@@ -57,6 +60,39 @@ export default function Analyzer() {
   // Handle analyze with AI
   const handleAnalyzeAI = async () => {
     await analyzeWithAI(content, clients);
+  };
+
+  // Fetch content from URL using Jina API
+  const handleFetchContent = async () => {
+    if (!contentUrl.trim()) {
+      toast.warning('Please enter a URL');
+      return;
+    }
+
+    setFetchingContent(true);
+    try {
+      // Use Jina Reader API to extract content
+      const response = await fetch(`https://r.jina.ai/${encodeURIComponent(contentUrl)}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch (HTTP ${response.status})`);
+      }
+
+      const text = await response.text();
+      
+      if (!text || text.trim().length === 0) {
+        throw new Error('No content found at URL');
+      }
+
+      // Set the content
+      setContent(text);
+      toast.success('Content fetched successfully!');
+    } catch (err) {
+      console.error('Fetch error:', err);
+      toast.error(`Failed to fetch content: ${err.message}`);
+    } finally {
+      setFetchingContent(false);
+    }
   };
 
   // Go to generator with pre-filled client
@@ -118,15 +154,38 @@ export default function Analyzer() {
               </Card.Description>
             </Card.Header>
 
-            {/* URL input (optional) */}
-            <Input
-              label="Content URL (optional)"
-              placeholder="https://..."
-              value={contentUrl}
-              onChange={(e) => setContentUrl(e.target.value)}
-              helper="For reference - we'll analyze the pasted content below"
-              className="mb-4"
-            />
+            {/* URL input (optional) with fetch button */}
+            <div className="space-y-2 mb-4">
+              <label className="text-sm font-medium text-gray-700">Content URL (optional)</label>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="https://..."
+                  value={contentUrl}
+                  onChange={(e) => setContentUrl(e.target.value)}
+                  className="flex-1"
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleFetchContent();
+                    }
+                  }}
+                />
+                <Button
+                  onClick={handleFetchContent}
+                  loading={fetchingContent}
+                  disabled={!contentUrl.trim() || fetchingContent}
+                  variant="secondary"
+                  leftIcon={Download}
+                  size="sm"
+                  title="Fetch content from URL"
+                  className="whitespace-nowrap"
+                >
+                  Fetch
+                </Button>
+              </div>
+              <p className="text-xs text-gray-500">
+                Paste a URL and click Fetch to automatically extract content (works with articles, blogs, forums, etc.)
+              </p>
+            </div>
 
             {/* Content textarea */}
             <TextArea
