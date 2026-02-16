@@ -17,9 +17,7 @@ export function buildSystemPrompt(options) {
     customTemplate = null,
   } = options;
 
-  const voicePrompt = includeCta && client.voice_prompt_with_cta
-    ? client.voice_prompt_with_cta
-    : client.voice_prompt;
+  const voicePrompt = client.voice_prompt;
 
   const sampleComments = client.sample_comments
     ?.filter(s => !s.platform || s.platform === platform) // Filter by platform or include "any platform" samples

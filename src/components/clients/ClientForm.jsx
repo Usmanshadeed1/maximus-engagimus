@@ -44,7 +44,6 @@ export default function ClientForm({
     industry: initialData?.industry || '',
     description: initialData?.description || '',
     voice_prompt: initialData?.voice_prompt || '',
-    voice_prompt_with_cta: initialData?.voice_prompt_with_cta || '',
     default_cta: initialData?.default_cta || '',
     target_audience: initialData?.target_audience || '',
   });
@@ -158,17 +157,6 @@ export default function ClientForm({
           rows={5}
           required
           helper="This is the core personality guide for generating comments"
-        />
-
-        <TextArea
-          label="Voice Prompt (with CTA)"
-          placeholder="Same as above, but include guidance for soft promotional content. For example:
-
-'...When appropriate, subtly mention that our team at [Client Name] can help with projects like this. Don't be pushy - focus on being genuinely helpful first.'"
-          value={formData.voice_prompt_with_cta}
-          onChange={(e) => updateField('voice_prompt_with_cta', e.target.value)}
-          rows={4}
-          helper="Optional: Used when 'Include CTA' is enabled in the generator"
         />
 
         <Input

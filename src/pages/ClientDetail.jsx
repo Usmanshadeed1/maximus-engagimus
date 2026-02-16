@@ -210,9 +210,8 @@ export default function ClientDetail() {
   };
 
   // Copy voice prompt
-  const handleCopyPrompt = async (withCta = false) => {
-    const prompt = withCta ? client.voice_prompt_with_cta : client.voice_prompt;
-    const success = await copyToClipboard(prompt);
+  const handleCopyPrompt = async () => {
+    const success = await copyToClipboard(client.voice_prompt);
     if (success) {
       toast.success('Voice prompt copied to clipboard');
     }
@@ -357,7 +356,7 @@ export default function ClientDetail() {
                     variant="ghost"
                     size="sm"
                     leftIcon={Copy}
-                    onClick={() => handleCopyPrompt(false)}
+                    onClick={() => handleCopyPrompt()}
                   >
                     Copy
                   </Button>
@@ -379,30 +378,6 @@ export default function ClientDetail() {
               {client.voice_prompt || 'No voice prompt set.'}
             </div>
           </Card>
-
-          {/* Voice Prompt with CTA */}
-          {client.voice_prompt_with_cta && (
-            <Card>
-              <Card.Header
-                actions={
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    leftIcon={Copy}
-                    onClick={() => handleCopyPrompt(true)}
-                  >
-                    Copy
-                  </Button>
-                }
-              >
-                <Card.Title>Voice Prompt (with CTA)</Card.Title>
-                <Card.Description>Used when "Include CTA" is enabled</Card.Description>
-              </Card.Header>
-              <div className="bg-gray-50 dark:bg-[var(--bg)] rounded-md p-3 text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
-                {client.voice_prompt_with_cta}
-              </div>
-            </Card>
-          )}
 
           {/* Default CTA */}
           {client.default_cta && (

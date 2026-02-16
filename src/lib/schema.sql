@@ -43,7 +43,6 @@ CREATE TABLE clients (
   industry VARCHAR(100) NOT NULL,
   description TEXT,
   voice_prompt TEXT NOT NULL,
-  voice_prompt_with_cta TEXT,
   default_cta TEXT,
   target_audience TEXT,
   is_active BOOLEAN DEFAULT true,
