@@ -463,7 +463,7 @@ function ProfileTab() {
           />
           <Input
             label="Role"
-            value={profile?.role || 'member'}
+            value={profile?.role || 'owner'}
             disabled
             className="capitalize"
           />
@@ -679,7 +679,29 @@ Generate \${numOptions} options now:`;
  * Organization Tab
  */
 function OrganizationTab() {
-  const { organization } = useAuth();
+  const { organization, profile } = useAuth();
+  const [orgData, setOrgData] = useState(organization);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // If organization is missing but profile exists, try to fetch it
+    if (!organization && profile?.organization_id) {
+      setLoading(true);
+      (async () => {
+        try {
+          const { getUserProfile } = await import('../lib/supabase');
+          const profileData = await getUserProfile();
+          setOrgData(profileData?.organization || null);
+        } catch (err) {
+          console.error('Error fetching organization:', err);
+        } finally {
+          setLoading(false);
+        }
+      })();
+    } else {
+      setOrgData(organization);
+    }
+  }, [organization, profile?.organization_id]);
 
   return (
     <div className="max-w-xl space-y-6">
@@ -690,22 +712,26 @@ function OrganizationTab() {
         </p>
       </div>
 
-      <Card>
-        <div className="space-y-4">
-          <Input
-            label="Organization Name"
-            value={organization?.name || ''}
-            disabled
-            helper="Contact support to change your organization name"
-          />
-          <Input
-            label="Organization ID"
-            value={organization?.id || ''}
-            disabled
-            className="font-mono text-sm"
-          />
-        </div>
-      </Card>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <Card>
+          <div className="space-y-4">
+            <Input
+              label="Organization Name"
+              value={orgData?.name || ''}
+              disabled
+              helper="Contact support to change your organization name"
+            />
+            <Input
+              label="Organization ID"
+              value={orgData?.id || ''}
+              disabled
+              className="font-mono text-sm"
+            />
+          </div>
+        </Card>
+      )}
     </div>
   );
 }

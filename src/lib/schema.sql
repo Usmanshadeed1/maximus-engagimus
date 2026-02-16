@@ -27,7 +27,7 @@ CREATE TABLE users (
   organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
   email VARCHAR(255) NOT NULL,
   full_name VARCHAR(255),
-  role VARCHAR(50) DEFAULT 'member' CHECK (role IN ('owner', 'admin', 'member')),
+  role VARCHAR(50) DEFAULT 'owner' CHECK (role IN ('owner', 'admin', 'member')),
   avatar_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()

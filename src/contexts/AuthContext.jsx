@@ -22,13 +22,28 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Ensure user has an organization
+  // Ensure user has an organization AND correct role
   const ensureOrganization = async (currentProfile, sessionUser) => {
-    if (currentProfile?.organization) return currentProfile; // Already has org
     if (!currentProfile) return null;
 
+    // If user already has organization but role is not 'owner', fix it
+    if (currentProfile?.organization) {
+      if (currentProfile.role !== 'owner') {
+        console.warn('User has organization but role is not owner, fixing...');
+        const { error: updateError } = await supabase
+          .from('users')
+          .update({ role: 'owner' })
+          .eq('id', currentProfile.id);
+        
+        if (!updateError) {
+          currentProfile.role = 'owner';
+        }
+      }
+      return currentProfile;
+    }
+
+    // User doesn't have organization yet, create one
     try {
-      // Create organization
       const orgName = `${currentProfile.full_name || sessionUser?.email || 'User'}'s Organization`;
       const orgSlug = orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
@@ -51,13 +66,17 @@ export function AuthProvider({ children }) {
 
       if (updateError) throw updateError;
 
-      // Update profile object
+      // Wait a bit for replication
+      await new Promise(r => setTimeout(r, 300));
+
+      // Update profile object with complete organization data
       currentProfile.organization_id = org.id;
       currentProfile.organization = org;
+      currentProfile.role = 'owner';
       return currentProfile;
     } catch (err) {
       console.error('Error ensuring organization:', err);
-      return currentProfile; // Return profile even if org creation fails
+      return currentProfile;
     }
   };
 
@@ -83,6 +102,13 @@ export function AuthProvider({ children }) {
 
     async function initializeAuth() {
       try {
+        // Clear old cached profiles with 'member' role (from before fix)
+        const cached = getCached('userProfile');
+        if (cached && cached.role === 'member' && cached.organization) {
+          console.warn('Clearing invalid cached profile with member role');
+          clearCache('userProfile');
+        }
+
         // Development shortcut: if dev mock auth is enabled, skip real Supabase calls
         if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined' && localStorage.getItem('dev:mockAuth') === 'true') {
           const mockUser = { id: 'dev-user', email: 'dev@local' };
